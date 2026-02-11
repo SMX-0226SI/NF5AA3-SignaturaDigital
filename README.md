@@ -12,7 +12,7 @@ En aquesta activitat, es desenvoluparà una infraestructura de clau pública (PK
 
 ## Requisits
 
-- Windows Server 2019 o superior.
-- Windows 10 o superior per a clients.
+- Windows Server 2019 o superior, recomanat Windows Server 2025.
+- Windows 10 o superior per a client, recomanat Windows 11.
 
 Descripció de l'activitat a la web.
