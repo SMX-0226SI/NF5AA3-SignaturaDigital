@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projecte Nexus: PKI i Signatura Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px; /* Constrained width for the chart */
+            margin: 0 auto;
+            height: 300px;
+            max-height: 300px;
+        }
+
+        /* Custom Scrollbar for better UI in text blocks if needed */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #2563eb; /* Blue 600 */
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        .tab-inactive {
+            color: #64748b; /* Slate 500 */
+            font-weight: 400;
+        }
+        .tab-inactive:hover {
+            color: #334155;
+        }
+
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+    <!-- Chosen Palette: Corporate Blue & Slate (NetSecure Brand) - Clean, professional, trustworthy. -->
+    <!-- Application Structure Plan: 
+         1. Header: Branding and Project Title.
+         2. Dashboard Layout: 
+            - Left/Top Panel: Context & Briefing (The Story).
+            - Main Area: Interactive "Project Phases" (Tabs for Phase 1, 2, 3). This breaks the long process into manageable tasks.
+            - Right/Bottom Panel: "Project Control" (Deliverables checklist & Grade Estimator).
+         3. Interactions:
+            - Tabs to switch phases to prevent information overload.
+            - "Complete" toggles for steps to track progress (stored in local state).
+            - Grade Calculator to interact with evaluation criteria.
+    -->
+    <!-- Visualization & Content Choices:
+         - Chart.js Doughnut: To visualize the Grading Criteria weights (Goal: Inform/Clarify priorities).
+         - Progress Bars: To show completion status of the phases (Goal: Motivation/Tracking).
+         - Interactive Checklists: For deliverables (Goal: Organize/Verify).
+         - Confirmed: NO SVG, NO Mermaid. Using Unicode icons and HTML/Tailwind styling.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header / Nav -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="text-2xl mr-2">🛡️</div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800">NetSecure <span class="text-blue-600">Solutions</span></h1>
+                        <p class="text-xs text-slate-500">Projecte: NEXUS PKI</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="scrollToSection('briefing')" class="text-slate-600 hover:text-blue-600 text-sm font-medium">Briefing</button>
+                    <button onclick="scrollToSection('execution')" class="text-slate-600 hover:text-blue-600 text-sm font-medium">Execució</button>
+                    <button onclick="scrollToSection('delivery')" class="text-slate-600 hover:text-blue-600 text-sm font-medium">Lliurament</button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs font-semibold text-slate-600">Progrés Global:</span>
+                    <div class="w-24 bg-slate-200 rounded-full h-2.5">
+                        <div id="globalProgressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <span id="globalProgressText" class="text-xs text-slate-600">0%</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Section 1: Briefing & Context -->
+        <section id="briefing" class="mb-12">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                    <div class="md:w-2/3">
+                        <div class="flex items-center mb-4">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded border border-blue-200 mr-2">Nou Encàrrec</span>
+                            <h2 class="text-2xl font-bold text-slate-900">Prova de Concepte: PKI Corporativa</h2>
+                        </div>
+                        <p class="text-slate-600 mb-4 leading-relaxed">
+                            Benvinguts de nou a l'equip. El client <strong>Nexus</strong> ens ha demanat modernitzar la seva seguretat. Necessiten garantir la integritat i no repudi dels seus documents interns.
+                        </p>
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            <strong>La vostra missió:</strong> Desplegar una infraestructura PKI basada en Windows Server 2025 perquè els empleats de Nexus puguin obtenir certificats i signar PDFs oficialment.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <h3 class="font-semibold text-slate-800 mb-2">🎯 Objectius Clau</h3>
+                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                    <li>Instal·lar CA a Windows Server 2025.</li>
+                                    <li>Habilitar inscripció web (IIS).</li>
+                                    <li>Generar certificats d'usuari.</li>
+                                    <li>Signar i verificar un PDF.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <h3 class="font-semibold text-slate-800 mb-2">⚙️ Requisits Tècnics</h3>
+                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                    <li>VM Windows Server 2025 (IP Estàtica).</li>
+                                    <li>VM Client Windows 10/11.</li>
+                                    <li>Adobe Acrobat Reader.</li>
+                                    <li>Treball en Parelles (Admin/Client).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization: Evaluation Criteria -->
+                    <div class="md:w-1/3 flex flex-col items-center justify-center bg-slate-50 rounded-lg p-4 border border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wide">Distribució de la Nota</h3>
+                        <div class="chart-container">
+                            <canvas id="gradeChart"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-slate-500 mt-2">Pes dels criteris d'avaluació sobre el total.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Execution Phase (Interactive) -->
+        <section id="execution" class="mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Guia d'Execució</h2>
+                    <p class="text-slate-600 text-sm">Seguiu els passos fase per fase. Marqueu les tasques completades per fer un seguiment.</p>
+                </div>
+                <!-- Role Filter (Simulation) -->
+                <div class="bg-white p-1 rounded-lg border border-slate-200 inline-flex mt-2 md:mt-0">
+                    <button id="btn-all" onclick="filterSteps('all')" class="px-3 py-1 text-sm rounded-md bg-blue-50 text-blue-700 font-medium transition-colors">Tots</button>
+                    <button id="btn-admin" onclick="filterSteps('admin')" class="px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors">Admin (Server)</button>
+                    <button id="btn-client" onclick="filterSteps('client')" class="px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors">Usuari (Client)</button>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="border-b border-slate-200 mb-6">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button onclick="switchTab('phase1')" id="tab-phase1" class="tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Fase 1: Servidor CA
+                    </button>
+                    <button onclick="switchTab('phase2')" id="tab-phase2" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Fase 2: Certificats Web
+                    </button>
+                    <button onclick="switchTab('phase3')" id="tab-phase3" class="tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Fase 3: Signatura Digital
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 min-h-[400px]">
+                
+                <!-- Phase 1: Server -->
+                <div id="content-phase1" class="space-y-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0 text-blue-500">ℹ️</div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>Rol: Administrador de Nexus</strong>. Aquesta fase es realitza completament al Windows Server 2025.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Step 1.1 -->
+                        <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start role-admin">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">1. Preparació i Rols</h4>
+                                <p class="text-slate-600 text-sm mt-1">Configureu el servidor <code>NEXUS-PKI</code> amb IP estàtica.</p>
+                                <ul class="list-disc list-inside text-sm text-slate-500 mt-2 ml-2 bg-slate-50 p-3 rounded">
+                                    <li>Instal·lar rol: <strong>Active Directory Certificate Services (AD CS)</strong>.</li>
+                                    <li>Serveis de rol obligatoris: <strong>Certification Authority</strong> i <strong>Web Enrollment</strong>.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Step 1.2 -->
+                        <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start role-admin">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">2. Configuració de la CA</h4>
+                                <p class="text-slate-600 text-sm mt-1">Executeu l'assistent post-instal·lació amb aquests paràmetres:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                                    <div class="bg-slate-50 p-2 rounded border border-slate-100"><span class="font-semibold">Tipus:</span> Root CA (Enterprise o Standalone)</div>
+                                    <div class="bg-slate-50 p-2 rounded border border-slate-100"><span class="font-semibold">Clau:</span> Create New Private Key</div>
+                                    <div class="bg-slate-50 p-2 rounded border border-slate-100"><span class="font-semibold">Hash:</span> SHA256 o superior</div>
+                                    <div class="bg-slate-50 p-2 rounded border border-slate-100"><span class="font-semibold">Common Name:</span> <code>Nexus-CA-[VostresNoms]</code></div>
+                                    <div class="bg-slate-50 p-2 rounded border border-slate-100 col-span-1 sm:col-span-2"><span class="font-semibold">Validesa:</span> 5 anys</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Client -->
+                <div id="content-phase2" class="hidden space-y-6">
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0 text-green-500">👤</div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700">
+                                    <strong>Rol: Empleat de Nexus</strong>. Aquesta fase es realitza a la màquina Client (W10/W11).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Step 2.1 -->
+                        <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start role-client">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">1. Accés i Cadena de Confiança</h4>
+                                <p class="text-slate-600 text-sm mt-1">Accediu a <code>http://IP-Servidor/certsrv</code>.</p>
+                                <div class="mt-2 text-sm text-slate-500 bg-amber-50 border border-amber-100 p-3 rounded">
+                                    <span class="font-bold text-amber-600">⚠ CRÍTIC:</span> Primer heu de descarregar el "CA Certificate" i instal·lar-lo a <strong>Entitats de certificació arrel de confiança</strong> (Trusted Root) del client. Si no ho feu, el PC no confiarà en Nexus.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2.2 -->
+                        <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start role-client">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">2. Sol·licitud del Certificat</h4>
+                                <p class="text-slate-600 text-sm mt-1">Torneu a la web, <em>Request a Certificate</em> -> <em>Advanced</em>.</p>
+                                <ul class="list-disc list-inside text-sm text-slate-500 mt-2">
+                                    <li>Template: <strong>User</strong>.</li>
+                                    <li>Envieu la sol·licitud.</li>
+                                </ul>
+                                <p class="text-xs text-slate-400 mt-1 italic">Si la CA és Standalone, l'Admin ha d'aprovar manualment a "Pending Requests" al servidor.</p>
+                            </div>
+                        </div>
+
+                         <!-- Step 2.3 -->
+                         <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start role-client">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">3. Instal·lació</h4>
+                                <p class="text-slate-600 text-sm mt-1">Descarregueu el certificat emès i instal·leu-lo.</p>
+                                <p class="text-sm text-slate-500 mt-1">Verifiqueu a <code>certmgr.msc</code> (carpeta Personal).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Signing -->
+                <div id="content-phase3" class="hidden space-y-6">
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0 text-purple-500">🤝</div>
+                            <div class="ml-3">
+                                <p class="text-sm text-purple-700">
+                                    <strong>Rol: Col·laboratiu</strong>. Ús pràctic de la infraestructura creada.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Step 3.1 -->
+                        <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">1. Signatura (Acrobat Reader)</h4>
+                                <p class="text-slate-600 text-sm mt-1">Creeu i convertiu a PDF un "Acord de Confidencialitat de Nexus".</p>
+                                <p class="text-sm text-slate-500 mt-2">Aneu a <strong>Tools > Certificates > Digitally Sign</strong>.</p>
+                                <p class="text-sm text-slate-500">Seleccioneu el certificat de Nexus i guardeu com <code>Acord_Nexus_Signat.pdf</code>.</p>
+                            </div>
+                        </div>
+
+                         <!-- Step 3.2 -->
+                         <div class="step-card bg-white border border-slate-200 rounded-lg p-4 flex items-start">
+                            <input type="checkbox" class="task-checkbox mt-1.5 h-4 w-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" onchange="updateProgress()">
+                            <div class="ml-4 w-full">
+                                <h4 class="text-lg font-semibold text-slate-800">2. Verificació Creuada</h4>
+                                <p class="text-slate-600 text-sm mt-1">Intercanvieu el PDF amb el company.</p>
+                                <div class="flex items-center mt-3 bg-green-50 p-2 rounded border border-green-100 w-fit">
+                                    <span class="text-green-600 mr-2 text-lg">✅</span>
+                                    <span class="text-sm font-medium text-green-800">Objectiu: Check Verd "Signed and all signatures are valid".</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 3: Deliverables & Grade Calculator -->
+        <section id="delivery" class="mb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Deliverables Checklist -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                        <span class="mr-2">📦</span> Llista de Lliurament
+                    </h3>
+                    <p class="text-sm text-slate-500 mb-4">Fitxer ZIP: <code>Act_PKI_Nom1_Nom2.zip</code></p>
+                    
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm font-medium">Memòria Tècnica (PDF) amb Portada NetSecure/Nexus</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm">Captures: Instal·lació Rol AD CS</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm">Captures: Portal Web /certsrv</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm">Captures: Consola CA (Issued Certs)</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm">Evidència: PDF Signat (Check Verd)</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded">
+                            <span class="ml-3 text-slate-700 text-sm">Fitxer: Certificat Arrel (.cer)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Grade Calculator -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-lg p-6 text-white">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <span class="mr-2">🧮</span> Estimador de Nota
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-6">Auto-avalueu la vostra feina abans de lliurar.</p>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">PKI Funcional (Cert vàlid)</span>
+                                <span class="text-sm font-bold text-blue-400">Max: 4 pts</span>
+                            </div>
+                            <input type="range" min="0" max="4" step="0.5" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500" id="range-pki" oninput="calculateGrade()">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Verificació Signatura (Check Verd)</span>
+                                <span class="text-sm font-bold text-green-400">Max: 3 pts</span>
+                            </div>
+                            <input type="range" min="0" max="3" step="0.5" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-green-500" id="range-sign" oninput="calculateGrade()">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Qualitat Memòria</span>
+                                <span class="text-sm font-bold text-purple-400">Max: 3 pts</span>
+                            </div>
+                            <input type="range" min="0" max="3" step="0.5" value="0" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-purple-500" id="range-doc" oninput="calculateGrade()">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-700 flex justify-between items-center">
+                        <span class="text-slate-300">Nota Estimada:</span>
+                        <span id="finalGrade" class="text-4xl font-bold text-white">0.0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>© 2025 NetSecure Solutions | Cicle Formatiu SMX - Seguretat Informàtica</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navigation Logic ---
+        function switchTab(phaseId) {
+            // Hide all contents
+            document.getElementById('content-phase1').classList.add('hidden');
+            document.getElementById('content-phase2').classList.add('hidden');
+            document.getElementById('content-phase3').classList.add('hidden');
+            
+            // Show selected
+            document.getElementById('content-' + phaseId).classList.remove('hidden');
+
+            // Reset tabs styling
+            const tabs = ['tab-phase1', 'tab-phase2', 'tab-phase3'];
+            tabs.forEach(tab => {
+                const el = document.getElementById(tab);
+                el.classList.remove('tab-active', 'border-b-2', 'border-blue-600', 'text-blue-600');
+                el.classList.add('tab-inactive');
+            });
+
+            // Activate selected tab
+            const activeTab = document.getElementById('tab-' + phaseId);
+            activeTab.classList.remove('tab-inactive');
+            activeTab.classList.add('tab-active', 'border-b-2', 'border-blue-600', 'text-blue-600');
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Role Filtering Logic ---
+        let currentRole = 'all';
+        function filterSteps(role) {
+            currentRole = role;
+            
+            // Reset buttons
+            document.getElementById('btn-all').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
+            document.getElementById('btn-admin').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
+            document.getElementById('btn-client').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
+
+            // Highlight active button
+            const activeClass = "px-3 py-1 text-sm rounded-md bg-blue-50 text-blue-700 font-medium transition-colors";
+            document.getElementById('btn-' + role).className = activeClass;
+
+            const adminSteps = document.querySelectorAll('.role-admin');
+            const clientSteps = document.querySelectorAll('.role-client');
+
+            if (role === 'all') {
+                adminSteps.forEach(el => el.style.opacity = '1');
+                clientSteps.forEach(el => el.style.opacity = '1');
+            } else if (role === 'admin') {
+                adminSteps.forEach(el => el.style.opacity = '1');
+                clientSteps.forEach(el => el.style.opacity = '0.3');
+            } else if (role === 'client') {
+                adminSteps.forEach(el => el.style.opacity = '0.3');
+                clientSteps.forEach(el => el.style.opacity = '1');
+            }
+        }
+
+        // --- Progress Tracking Logic ---
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const total = checkboxes.length;
+            let checked = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) checked++;
+            });
+
+            const percent = Math.round((checked / total) * 100);
+            document.getElementById('globalProgressBar').style.width = percent + '%';
+            document.getElementById('globalProgressText').innerText = percent + '%';
+        }
+
+        // --- Grade Calculator Logic ---
+        function calculateGrade() {
+            const pki = parseFloat(document.getElementById('range-pki').value);
+            const sign = parseFloat(document.getElementById('range-sign').value);
+            const doc = parseFloat(document.getElementById('range-doc').value);
+            
+            const total = pki + sign + doc;
+            document.getElementById('finalGrade').innerText = total.toFixed(1);
+
+            // Color change based on grade
+            const gradeEl = document.getElementById('finalGrade');
+            if (total < 5) gradeEl.className = "text-4xl font-bold text-red-400";
+            else if (total < 8) gradeEl.className = "text-4xl font-bold text-yellow-400";
+            else gradeEl.className = "text-4xl font-bold text-green-400";
+        }
+
+        // --- Chart.js Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('gradeChart').getContext('2d');
+            
+            // Data derived from Source Report criteria
+            const data = {
+                labels: ['PKI Funcional (40%)', 'Signatura Correcta (30%)', 'Memòria Tècnica (30%)'],
+                datasets: [{
+                    data: [40, 30, 30],
+                    backgroundColor: [
+                        '#3b82f6', // Blue 500
+                        '#22c55e', // Green 500
+                        '#a855f7'  // Purple 500
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 8,
+                                font: { size: 11, family: "'Inter', sans-serif" }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%',
+                }
+            };
+
+            new Chart(ctx, config);
+        });
+    </script>
+</body>
+</html>
