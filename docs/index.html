@@ -6,80 +6,7 @@
     <title>Projecte Nexus: PKI i Signatura Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Slate 50 */
-            color: #334155; /* Slate 700 */
-        }
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px; /* Constrained width for the chart */
-            margin: 0 auto;
-            height: 300px;
-            max-height: 300px;
-        }
-
-        /* Custom Scrollbar for better UI in text blocks if needed */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        .tab-active {
-            border-bottom: 2px solid #2563eb; /* Blue 600 */
-            color: #2563eb;
-            font-weight: 600;
-        }
-        
-        .tab-inactive {
-            color: #64748b; /* Slate 500 */
-            font-weight: 400;
-        }
-        .tab-inactive:hover {
-            color: #334155;
-        }
-
-        .step-card {
-            transition: all 0.3s ease;
-        }
-        .step-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-    </style>
-    <!-- Chosen Palette: Corporate Blue & Slate (NetSecure Brand) - Clean, professional, trustworthy. -->
-    <!-- Application Structure Plan: 
-         1. Header: Branding and Project Title.
-         2. Dashboard Layout: 
-            - Left/Top Panel: Context & Briefing (The Story).
-            - Main Area: Interactive "Project Phases" (Tabs for Phase 1, 2, 3). This breaks the long process into manageable tasks.
-            - Right/Bottom Panel: "Project Control" (Deliverables checklist & Grade Estimator).
-         3. Interactions:
-            - Tabs to switch phases to prevent information overload.
-            - "Complete" toggles for steps to track progress (stored in local state).
-            - Grade Calculator to interact with evaluation criteria.
-    -->
-    <!-- Visualization & Content Choices:
-         - Chart.js Doughnut: To visualize the Grading Criteria weights (Goal: Inform/Clarify priorities).
-         - Progress Bars: To show completion status of the phases (Goal: Motivation/Tracking).
-         - Interactive Checklists: For deliverables (Goal: Organize/Verify).
-         - Confirmed: NO SVG, NO Mermaid. Using Unicode icons and HTML/Tailwind styling.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -90,8 +17,8 @@
                 <div class="flex items-center">
                     <div class="text-2xl mr-2">🛡️</div>
                     <div>
-                        <h1 class="text-xl font-bold text-slate-800">NetSecure <span class="text-blue-600">Solutions</span></h1>
-                        <p class="text-xs text-slate-500">Projecte: NEXUS PKI</p>
+                        <h1 class="text-xl font-bold text-slate-800">NetSecure Solutions</span></h1>
+                        <p class="text-xs text-slate-500">Projecte NEXUS</p>
                     </div>
                 </div>
                 <div class="hidden md:flex space-x-8">
@@ -122,7 +49,7 @@
                             <h2 class="text-2xl font-bold text-slate-900">Prova de Concepte: PKI Corporativa</h2>
                         </div>
                         <p class="text-slate-600 mb-4 leading-relaxed">
-                            Benvinguts de nou a l'equip. El client <strong>Nexus</strong> ens ha demanat modernitzar la seva seguretat. Necessiten garantir la integritat i no repudi dels seus documents interns.
+                            El client <strong>Projecte Nexus</strong> us ha demanat modernitzar la seva seguretat. Necessiten garantir la integritat i no repudi dels seus documents interns.
                         </p>
                         <p class="text-slate-600 mb-6 leading-relaxed">
                             <strong>La vostra missió:</strong> Desplegar una infraestructura PKI basada en Windows Server 2025 perquè els empleats de Nexus puguin obtenir certificats i signar PDFs oficialment.
@@ -141,9 +68,9 @@
                             <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
                                 <h3 class="font-semibold text-slate-800 mb-2">⚙️ Requisits Tècnics</h3>
                                 <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                    <li>VM Windows Server 2025 (IP Estàtica).</li>
-                                    <li>VM Client Windows 10/11.</li>
-                                    <li>Adobe Acrobat Reader.</li>
+                                    <li>VM Windows Server 2025 (xarxa NAT).</li>
+                                    <li>VM Client Windows 10/11 (xarxa NAT).</li>
+                                    <li>Adobe Acrobat Reader instal·lat al client.</li>
                                     <li>Treball en Parelles (Admin/Client).</li>
                                 </ul>
                             </div>
@@ -423,142 +350,6 @@
         </div>
     </footer>
 
-    <script>
-        // --- Navigation Logic ---
-        function switchTab(phaseId) {
-            // Hide all contents
-            document.getElementById('content-phase1').classList.add('hidden');
-            document.getElementById('content-phase2').classList.add('hidden');
-            document.getElementById('content-phase3').classList.add('hidden');
-            
-            // Show selected
-            document.getElementById('content-' + phaseId).classList.remove('hidden');
-
-            // Reset tabs styling
-            const tabs = ['tab-phase1', 'tab-phase2', 'tab-phase3'];
-            tabs.forEach(tab => {
-                const el = document.getElementById(tab);
-                el.classList.remove('tab-active', 'border-b-2', 'border-blue-600', 'text-blue-600');
-                el.classList.add('tab-inactive');
-            });
-
-            // Activate selected tab
-            const activeTab = document.getElementById('tab-' + phaseId);
-            activeTab.classList.remove('tab-inactive');
-            activeTab.classList.add('tab-active', 'border-b-2', 'border-blue-600', 'text-blue-600');
-        }
-
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // --- Role Filtering Logic ---
-        let currentRole = 'all';
-        function filterSteps(role) {
-            currentRole = role;
-            
-            // Reset buttons
-            document.getElementById('btn-all').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
-            document.getElementById('btn-admin').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
-            document.getElementById('btn-client').className = "px-3 py-1 text-sm rounded-md text-slate-600 hover:bg-slate-50 transition-colors";
-
-            // Highlight active button
-            const activeClass = "px-3 py-1 text-sm rounded-md bg-blue-50 text-blue-700 font-medium transition-colors";
-            document.getElementById('btn-' + role).className = activeClass;
-
-            const adminSteps = document.querySelectorAll('.role-admin');
-            const clientSteps = document.querySelectorAll('.role-client');
-
-            if (role === 'all') {
-                adminSteps.forEach(el => el.style.opacity = '1');
-                clientSteps.forEach(el => el.style.opacity = '1');
-            } else if (role === 'admin') {
-                adminSteps.forEach(el => el.style.opacity = '1');
-                clientSteps.forEach(el => el.style.opacity = '0.3');
-            } else if (role === 'client') {
-                adminSteps.forEach(el => el.style.opacity = '0.3');
-                clientSteps.forEach(el => el.style.opacity = '1');
-            }
-        }
-
-        // --- Progress Tracking Logic ---
-        function updateProgress() {
-            const checkboxes = document.querySelectorAll('.task-checkbox');
-            const total = checkboxes.length;
-            let checked = 0;
-            checkboxes.forEach(cb => {
-                if (cb.checked) checked++;
-            });
-
-            const percent = Math.round((checked / total) * 100);
-            document.getElementById('globalProgressBar').style.width = percent + '%';
-            document.getElementById('globalProgressText').innerText = percent + '%';
-        }
-
-        // --- Grade Calculator Logic ---
-        function calculateGrade() {
-            const pki = parseFloat(document.getElementById('range-pki').value);
-            const sign = parseFloat(document.getElementById('range-sign').value);
-            const doc = parseFloat(document.getElementById('range-doc').value);
-            
-            const total = pki + sign + doc;
-            document.getElementById('finalGrade').innerText = total.toFixed(1);
-
-            // Color change based on grade
-            const gradeEl = document.getElementById('finalGrade');
-            if (total < 5) gradeEl.className = "text-4xl font-bold text-red-400";
-            else if (total < 8) gradeEl.className = "text-4xl font-bold text-yellow-400";
-            else gradeEl.className = "text-4xl font-bold text-green-400";
-        }
-
-        // --- Chart.js Initialization ---
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('gradeChart').getContext('2d');
-            
-            // Data derived from Source Report criteria
-            const data = {
-                labels: ['PKI Funcional (40%)', 'Signatura Correcta (30%)', 'Memòria Tècnica (30%)'],
-                datasets: [{
-                    data: [40, 30, 30],
-                    backgroundColor: [
-                        '#3b82f6', // Blue 500
-                        '#22c55e', // Green 500
-                        '#a855f7'  // Purple 500
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            };
-
-            const config = {
-                type: 'doughnut',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                boxWidth: 8,
-                                font: { size: 11, family: "'Inter', sans-serif" }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label;
-                                }
-                            }
-                        }
-                    },
-                    cutout: '70%',
-                }
-            };
-
-            new Chart(ctx, config);
-        });
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
