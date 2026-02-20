@@ -34,7 +34,7 @@ const appData = {
             description: "Creació manual d'un certificat web amb SAN per assegurar el portal.",
             tasks: [
                 { id: 'p3-1', role: 'admin', text: "PowerShell: Crear carpeta C:\\temp i fitxer 'servercert.inf'.", completed: false },
-                { id: 'p3-2', role: 'admin', text: "Configurar el fitxer .inf amb Subject='CN=ca.nexus.test' i extensions SAN.", completed: false },
+                { id: 'p3-2', role: 'admin', text: "Configurar el fitxer .inf per la petició.", completed: false },
                 { id: 'p3-3', role: 'admin', text: "Executar: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
                 { id: 'p3-4', role: 'admin', text: "Executar: certreq -submit ... (Seleccionar CA)", completed: false },
                 { id: 'p3-5', role: 'admin', text: "Consola CA: Emetre la petició des de 'Pending Requests'.", completed: false },
@@ -83,7 +83,7 @@ const appData = {
         }
     ],
     deliverablesList: [
-        { id: 1, role: 'admin', title: "Captura 1: Configuració CA", desc: "Paràmetres configuració CA'." },
+        { id: 1, role: 'admin', title: "Captura 1: Configuració CA", desc: "Paràmetres configuració CA." },
         { id: 2, role: 'admin', title: "Captura 2: Consola CA", desc: "Arbre desplegat i nom 'Nexus-Root-CA'." },
         { id: 3, role: 'admin', title: "Captura 3: Consola CA", desc: "Mostrar certificat acceptat (issued)." },
         { id: 4, role: 'admin', title: "Captura 4: PowerShell", desc: "Mostrar arxiu petició i èxit de les comandes certreq." },
