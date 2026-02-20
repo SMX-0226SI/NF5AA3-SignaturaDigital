@@ -3,19 +3,33 @@ const appData = {
     phases: [
         {
             id: 'phase1',
+            title: "Configuració servidor",
+            description: "Configuracions prèvies del servidor.",
+            tasks: [
+                { id: 'p1-1', role: 'admin', text: "Instal·lar el servidor Windows Server 2025.", completed: false },
+                { id: 'p1-2', role: 'admin', text: "Desactivar les actualitzacions (màxim temps).", completed: false },
+                { id: 'p1-3', role: 'admin', text: "Configurar la IP estàtica .", completed: false },
+                { id: 'p1-4', role: 'admin', text: "Canviar el nom del servidor a SRV-CA-0x on x número de grup.", completed: false },
+                
+            ],
+            deliverables: [] // ID of deliverable
+        },
+        {
+            id: 'phase2',
             title: "Instal·lació de la CA Arrel",
             description: "Configuració inicial del rol Active Directory Certificate Services en mode Standalone.",
             tasks: [
                 { id: 'p1-1', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p1-2', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
-                { id: 'p1-3', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
-                { id: 'p1-4', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
+                { id: 'p1-2', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
+                { id: 'p1-3', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
+                { id: 'p1-4', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
+                { id: 'p1-', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
                 { id: 'p1-5', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
             ],
             deliverables: [1] // ID of deliverable
         },
         {
-            id: 'phase2',
+            id: 'phase3',
             title: "Generació Certificat SSL",
             description: "Creació manual d'un certificat web amb SAN per assegurar el portal.",
             tasks: [
@@ -30,7 +44,7 @@ const appData = {
             deliverables: [2]
         },
         {
-            id: 'phase3',
+            id: 'phase4',
             title: "Portal Web i IIS",
             description: "Afegir el rol de Web Enrollment per permetre peticions via navegador.",
             tasks: [
@@ -40,7 +54,7 @@ const appData = {
             deliverables: []
         },
         {
-            id: 'phase4',
+            id: 'phase5',
             title: "Configuració IIS",
             description: "Enllaçar el certificat SSL al lloc web per defecte per habilitar HTTPS.",
             tasks: [
@@ -52,7 +66,7 @@ const appData = {
             deliverables: [3]
         },
         {
-            id: 'phase5',
+            id: 'phase6',
             title: "Client i Signatura PDF",
             description: "Procés col·laboratiu final: el client confia en la CA, demana certificat i signa un document.",
             tasks: [
