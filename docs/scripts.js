@@ -19,37 +19,37 @@ const appData = {
             title: "Instal·lació de la CA Arrel",
             description: "Configuració inicial del rol Active Directory Certificate Services en mode Standalone.",
             tasks: [
-                { id: 'p1-1', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p1-2', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p1-3', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
-                { id: 'p1-4', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
-                { id: 'p1-', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
-                { id: 'p1-5', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
+                { id: 'p2-1', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
+                { id: 'p2-2', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
+                { id: 'p2-3', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
+                { id: 'p2-4', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
+                { id: 'p2-5', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
+                { id: 'p2-6', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
             ],
-            deliverables: [1] // ID of deliverable
+            deliverables: [1,2] // ID of deliverable
         },
         {
             id: 'phase3',
             title: "Generació Certificat SSL",
             description: "Creació manual d'un certificat web amb SAN per assegurar el portal.",
             tasks: [
-                { id: 'p2-1', role: 'admin', text: "PowerShell: Crear carpeta C:\\temp i fitxer 'servercert.inf'.", completed: false },
-                { id: 'p2-2', role: 'admin', text: "Configurar el fitxer .inf amb Subject='CN=ca.nexus.test' i extensions SAN.", completed: false },
-                { id: 'p2-3', role: 'admin', text: "Executar: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
-                { id: 'p2-4', role: 'admin', text: "Executar: certreq -submit ... (Seleccionar CA)", completed: false },
-                { id: 'p2-5', role: 'admin', text: "Consola CA: Emetre la petició des de 'Pending Requests'.", completed: false },
-                { id: 'p2-6', role: 'admin', text: "Executar: certreq -retrieve ... (Obtenir .cer)", completed: false },
+                { id: 'p3-1', role: 'admin', text: "PowerShell: Crear carpeta C:\\temp i fitxer 'servercert.inf'.", completed: false },
+                { id: 'p3-2', role: 'admin', text: "Configurar el fitxer .inf amb Subject='CN=ca.nexus.test' i extensions SAN.", completed: false },
+                { id: 'p3-3', role: 'admin', text: "Executar: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
+                { id: 'p3-4', role: 'admin', text: "Executar: certreq -submit ... (Seleccionar CA)", completed: false },
+                { id: 'p3-5', role: 'admin', text: "Consola CA: Emetre la petició des de 'Pending Requests'.", completed: false },
+                { id: 'p3-6', role: 'admin', text: "Executar: certreq -retrieve ... (Obtenir .cer)", completed: false },
                 { id: 'p2-7', role: 'admin', text: "Executar: certreq -accept ... (Instal·lar certificat)", completed: false }
             ],
-            deliverables: [2]
+            deliverables: [3,4]
         },
         {
             id: 'phase4',
             title: "Portal Web i IIS",
             description: "Afegir el rol de Web Enrollment per permetre peticions via navegador.",
             tasks: [
-                { id: 'p3-1', role: 'admin', text: "Server Manager: Afegir servei de rol 'Certification Authority Web Enrollment'.", completed: false },
-                { id: 'p3-2', role: 'admin', text: "Executar configuració post-instal·lació per Web Enrollment.", completed: false }
+                { id: 'p4-1', role: 'admin', text: "Server Manager: Afegir servei de rol 'Certification Authority Web Enrollment'.", completed: false },
+                { id: 'p4-2', role: 'admin', text: "Executar configuració post-instal·lació per Web Enrollment.", completed: false }
             ],
             deliverables: []
         },
@@ -58,38 +58,40 @@ const appData = {
             title: "Configuració IIS",
             description: "Enllaçar el certificat SSL al lloc web per defecte per habilitar HTTPS.",
             tasks: [
-                { id: 'p4-1', role: 'admin', text: "Obrir IIS Manager -> Default Web Site.", completed: false },
-                { id: 'p4-2', role: 'admin', text: "Bindings (Enllaços): Afegir HTTPS port 443.", completed: false },
-                { id: 'p4-3', role: 'admin', text: "Seleccionar 'Certificat Web Nexus'.", completed: false },
-                { id: 'p4-4', role: 'admin', text: "Provar accés local: https://ca.nexus.test/certsrv", completed: false }
+                { id: 'p5-1', role: 'admin', text: "Obrir IIS Manager -> Default Web Site.", completed: false },
+                { id: 'p5-2', role: 'admin', text: "Bindings (Enllaços): Afegir HTTPS port 443.", completed: false },
+                { id: 'p5-3', role: 'admin', text: "Seleccionar 'Certificat Web Nexus'.", completed: false },
+                { id: 'p5-4', role: 'admin', text: "Provar accés local: https://localhost/certsrv", completed: false }
             ],
-            deliverables: [3]
+            deliverables: [5]
         },
         {
             id: 'phase6',
             title: "Client i Signatura PDF",
             description: "Procés col·laboratiu final: el client confia en la CA, demana certificat i signa un document.",
             tasks: [
-                { id: 'p5-1', role: 'client', text: "Client: Accedir a https://ca.nexus.test/certsrv (acceptar error seguretat).", completed: false },
-                { id: 'p5-2', role: 'client', text: "Client: Descarregar certificat CA Arrel del portal.", completed: false },
-                { id: 'p5-3', role: 'client', text: "Client: Instal·lar CA a 'Entitats de certificació arrel de confiança'. Reiniciar navegador.", completed: false },
-                { id: 'p5-4', role: 'client', text: "Client: Demanar certificat d'usuari via web. Avisar Admin.", completed: false },
-                { id: 'p5-5', role: 'admin', text: "Admin: Consola CA -> Pending Requests -> Emetre (Issue) el certificat.", completed: false },
-                { id: 'p5-6', role: 'client', text: "Client: Web -> View Status -> Descarregar i instal·lar certificat d'usuari.", completed: false },
-                { id: 'p5-7', role: 'client', text: "Client: Obrir PDF amb Adobe/Lector i signar amb el nou certificat.", completed: false },
-                { id: 'p5-8', role: 'client', text: "Client: Tancar i reobrir PDF. Verificar 'Signatura Vàlida'.", completed: false }
+                { id: 'p6-1', role: 'client', text: "Client: Accedir a https://IP_servidor/certsrv (acceptar error seguretat).", completed: false },
+                { id: 'p6-2', role: 'client', text: "Client: Descarregar certificat CA Arrel del portal.", completed: false },
+                { id: 'p6-3', role: 'client', text: "Client: Instal·lar CA a 'Entitats de certificació arrel de confiança'. Reiniciar navegador.", completed: false },
+                { id: 'p6-4', role: 'client', text: "Client: Demanar certificat d'usuari via web. Avisar Admin.", completed: false },
+                { id: 'p6-5', role: 'admin', text: "Admin: Consola CA -> Pending Requests -> Emetre (Issue) el certificat.", completed: false },
+                { id: 'p6-6', role: 'client', text: "Client: Web -> View Status -> Descarregar i instal·lar certificat d'usuari.", completed: false },
+                { id: 'p6-7', role: 'client', text: "Client: Obrir PDF amb Adobe/Lector i signar amb el nou certificat.", completed: false },
+                { id: 'p6-8', role: 'client', text: "Client: Tancar i reobrir PDF. Verificar 'Signatura Vàlida'.", completed: false }
             ],
-            deliverables: [4, 5, 6, 7]
+            deliverables: [6, 7, 8, 9]
         }
     ],
     deliverablesList: [
-        { id: 1, role: 'admin', title: "Captura 1: Consola CA", desc: "Arbre desplegat i nom 'Nexus-Root-CA'." },
-        { id: 2, role: 'admin', title: "Captura 2: PowerShell", desc: "Èxit de les comandes certreq." },
-        { id: 3, role: 'admin', title: "Captura 3: IIS Bindings", desc: "Enllaç HTTPS port 443 configurat." },
-        { id: 4, role: 'client', title: "Captura 4: Magatzem Client", desc: "Certificat CA instal·lat a Arrels de Confiança." },
-        { id: 5, role: 'client', title: "Captura 5: Navegador Segur", desc: "Portal web sense errors (cadenat tancat)." },
-        { id: 6, role: 'admin', title: "Captura 6: CA Issued Certs", desc: "Mostrant certificat Web i certificat Usuari." },
-        { id: 7, role: 'client', title: "Captura 7: PDF Signat", desc: "Panell de signatura indicant 'Vàlida'." }
+        { id: 1, role: 'admin', title: "Captura 1: Configuració CA", desc: "Paràmetres configuració CA'." },
+        { id: 2, role: 'admin', title: "Captura 2: Consola CA", desc: "Arbre desplegat i nom 'Nexus-Root-CA'." },
+        { id: 3, role: 'admin', title: "Captura 3: Consola CA", desc: "Mostrar certificat acceptat (issued)." },
+        { id: 4, role: 'admin', title: "Captura 4: PowerShell", desc: "Mostrar arxiu petició i èxit de les comandes certreq." },
+        { id: 5, role: 'admin', title: "Captura 5: IIS Bindings", desc: "Enllaç HTTPS port 443 configurat." },
+        { id: 6, role: 'client', title: "Captura 6: Magatzem Client", desc: "Certificat CA instal·lat a Arrels de Confiança." },
+        { id: 7, role: 'client', title: "Captura 7: Navegador Segur", desc: "Portal web sense errors (cadenat tancat)." },
+        { id: 8, role: 'admin', title: "Captura 8: CA Issued Certs", desc: "Mostrant certificat Web i certificat Usuari." },
+        { id: 9, role: 'client', title: "Captura 9: PDF Signat", desc: "Panell de signatura indicant 'Vàlida'." }
     ]
 };
 
@@ -140,7 +142,7 @@ function initCharts() {
             labels: appData.phases.map(p => `Fase ${p.id.replace('phase', '')}`),
             datasets: [{
                 label: '% Completat',
-                data: [0, 0, 0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0],
                 backgroundColor: '#6366f1', // Indigo-500
                 borderRadius: 4
             }]
