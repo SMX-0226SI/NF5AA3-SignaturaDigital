@@ -20,11 +20,10 @@ const appData = {
             description: "Configuració inicial del rol Active Directory Certificate Services en mode Standalone.",
             tasks: [
                 { id: 'p2-1', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p2-2', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p2-3', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
-                { id: 'p2-4', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
-                { id: 'p2-5', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
-                { id: 'p2-6', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
+                { id: 'p2-2', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
+                { id: 'p2-3', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
+                { id: 'p2-4', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
+                { id: 'p2-5', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
             ],
             deliverables: [1,2] // ID of deliverable
         },
@@ -86,7 +85,7 @@ const appData = {
         { id: 1, role: 'admin', title: "Captura 1: Configuració CA", desc: "Paràmetres configuració CA." },
         { id: 2, role: 'admin', title: "Captura 2: Consola CA", desc: "Arbre desplegat i nom 'Nexus-Root-CA'." },
         { id: 3, role: 'admin', title: "Captura 3: Consola CA", desc: "Mostrar certificat acceptat (issued)." },
-        { id: 4, role: 'admin', title: "Captura 4: PowerShell", desc: "Mostrar arxiu petició i èxit de les comandes certreq." },
+        { id: 4, role: 'admin', title: "Captura 4: PowerShell", desc: "Mostrar arxiu peticióèxit de les comandes certreq." },
         { id: 5, role: 'admin', title: "Captura 5: IIS Bindings", desc: "Enllaç HTTPS port 443 configurat." },
         { id: 6, role: 'client', title: "Captura 6: Magatzem Client", desc: "Certificat CA instal·lat a Arrels de Confiança." },
         { id: 7, role: 'client', title: "Captura 7: Navegador Segur", desc: "Portal web sense errors (cadenat tancat)." },

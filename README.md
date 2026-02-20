@@ -15,4 +15,4 @@ En aquesta activitat, es desenvoluparà una infraestructura de clau pública (PK
 - Windows Server 2025.
 - Windows 11.
 
-Descripció completa de l'activitat a la web.
+Descripció completa de l'activitat a la [guia de l'activitat](guia.md).
