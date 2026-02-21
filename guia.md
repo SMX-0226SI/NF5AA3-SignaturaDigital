@@ -81,5 +81,5 @@ _continue="dns=SRV-CA-01"
 
 ## Fase 6: Signatura digital d'un PDF — [Rol: Client Windows 11]
 
-1. [Rol: Client Windows 11] Obriu un document PDF qualsevol amb un programari lector de PDFs (com Adobe Acrobat Reader). Utilitzeu l'eina "Certificats" per Signar digitalment el document utilitzant el certificat que acabeu d'obtenir.
-1. [Rol: Client Windows 11] Deseu el document PDF signat, tanqueu el programa i torneu-lo a obrir. Comproveu que el programari valida la signatura de forma correcta ("Signatura és vàlida").
+1. Obriu un document PDF qualsevol amb un programari lector de PDFs (com Adobe Acrobat Reader). Utilitzeu l'eina "Certificats" per Signar digitalment el document utilitzant el certificat que acabeu d'obtenir.
+1. Deseu el document PDF signat, tanqueu el programa i torneu-lo a obrir. Comproveu que el programari valida la signatura de forma correcta ("Signatura és vàlida").
