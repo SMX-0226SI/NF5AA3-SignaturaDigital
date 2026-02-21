@@ -14,7 +14,7 @@
 4. Canviar el nom del servidor a SRV-CA-0X on X és el número del vostre grup.
 5. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent (192.168.2.x o 192.168.4.x).
 
-## Fase 1: Instal·lació de ka CA Arrel — [Rol: Administrador del Servidor]
+## Fase 1: Instal·lació de la CA Arrel — [Rol: Administrador del Servidor]
 
 1. Obriu l'Administrador del Servidor (Server Manager) al servidor i afegiu el rol d'**Active Directory Certificate Services (AD CS)**.
 2. Durant la selecció de serveis de rol, marqueu només Certification Authority. Completa la instal·lació.
