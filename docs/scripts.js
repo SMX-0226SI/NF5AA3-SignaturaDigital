@@ -1,363 +1,392 @@
-// --- DATA STORE ---
-const appData = {
+// --- DATA STRUCTURE (Based exactly on guia.md text) ---
+const pkiData = {
     phases: [
         {
-            id: 'phase1',
-            title: "Configuració servidor",
-            description: "Configuracions prèvies del servidor.",
+            id: 'config',
+            icon: '⚙️',
+            title: 'Configuracions inicials',
+            desc: 'Preparació de l\'entorn de xarxa i màquines virtuals abans de començar el desplegament.',
             tasks: [
-                { id: 'p1-1', role: 'admin', text: "Instal·lar el servidor Windows Server 2025.", completed: false },
-                { id: 'p1-2', role: 'admin', text: "Desactivar les actualitzacions (màxim temps).", completed: false },
-                { id: 'p1-3', role: 'admin', text: "Configurar la IP estàtica .", completed: false },
-                { id: 'p1-4', role: 'admin', text: "Canviar el nom del servidor a SRV-CA-0x on x número de grup.", completed: false },
-                
-            ],
-            deliverables: [] // ID of deliverable
+                { id: 'c1', role: 'both', text: "Instal·lar Windows Server 2025 i Windows 11 a les VMs. Configurar adaptadors de xarxa en mode pont per accés directe.", completed: false },
+                { id: 'c2', role: 'admin', text: "Inicialment, el servidor no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.", completed: false },
+                { id: 'c3', role: 'both', text: "Configurar una IP estàtica al servidor i client segons l'esquema del grup-classe (veure Tauler de Control).", completed: false },
+                { id: 'c4', role: 'admin', text: "Canviar el nom del servidor a SRV-CA-0X on X és el número del vostre grup.", completed: false },
+                { id: 'c5', role: 'client', text: "Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.", completed: false }
+            ]
         },
         {
-            id: 'phase2',
-            title: "Instal·lació de la CA Arrel",
-            description: "Configuració inicial del rol Active Directory Certificate Services en mode Standalone.",
+            id: 'f1',
+            icon: '🏗️',
+            title: 'Fase 1: Instal·lació CA Arrel',
+            desc: 'Desplegament del servei base de l\'Autoritat de Certificació (Active Directory Certificate Services).',
             tasks: [
-                { id: 'p2-1', role: 'admin', text: "Obrir Server Manager i afegir rol 'Active Directory Certificate Services'.", completed: false },
-                { id: 'p2-2', role: 'admin', text: "Seleccionar només 'Certification Authority' i instal·lar.", completed: false },
-                { id: 'p2-3', role: 'admin', text: "Configurar Post-instal·lació: Standalone CA, Root CA.", completed: false },
-                { id: 'p2-4', role: 'admin', text: "Crear Clau Privada nova: 4096 bits.", completed: false },
-                { id: 'p2-5', role: 'admin', text: "Nom comú: 'Nexus-Root-CA', Validesa: 5 anys.", completed: false }
-            ],
-            deliverables: [1,2] // ID of deliverable
+                { id: 'f1_1', role: 'admin', text: "Obriu l'Administrador del Servidor (Server Manager) i afegiu el rol d'Active Directory Certificate Services (AD CS).", completed: false },
+                { id: 'f1_2', role: 'admin', text: "Durant la selecció de serveis de rol, marqueu només Certification Authority. Completa la instal·lació.", completed: false },
+                { id: 'f1_3', role: 'admin', text: "Inicieu la configuració post-instal·lació (bandera de notificacions).", completed: false },
+                { id: 'f1_4', role: 'admin', text: "Configuració: Tipus d'instal·lació: Standalone CA (CA Independent).", completed: false },
+                { id: 'f1_5', role: 'admin', text: "Configuració: Tipus de CA: Root CA (CA Arrel).", completed: false },
+                { id: 'f1_6', role: 'admin', text: "Configuració: Clau privada: Creeu una nova clau privada amb longitud de 4096 bits.", completed: false },
+                { id: 'f1_7', role: 'admin', text: "Configuració: Nom de la CA: NexusX-Root-CA (on X és el grup). Validesa: 5 anys.", completed: false }
+            ]
         },
         {
-            id: 'phase3',
-            title: "Generació Certificat SSL",
-            description: "Creació manual d'un certificat web amb SAN per assegurar el portal.",
+            id: 'f2',
+            icon: '📜',
+            title: 'Fase 2: Generació Certificat SSL',
+            desc: 'Creació de la petició, emissió i instal·lació del certificat SSL per assegurar el portal web.',
             tasks: [
-                { id: 'p3-1', role: 'admin', text: "PowerShell: Crear carpeta C:\\temp i fitxer 'servercert.inf'.", completed: false },
-                { id: 'p3-2', role: 'admin', text: "Configurar el fitxer .inf per la petició.", completed: false },
-                { id: 'p3-3', role: 'admin', text: "Executar: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
-                { id: 'p3-4', role: 'admin', text: "Executar: certreq -submit ... (Seleccionar CA)", completed: false },
-                { id: 'p3-5', role: 'admin', text: "Consola CA: Emetre la petició des de 'Pending Requests'.", completed: false },
-                { id: 'p3-6', role: 'admin', text: "Executar: certreq -retrieve ... (Obtenir .cer)", completed: false },
-                { id: 'p2-7', role: 'admin', text: "Executar: certreq -accept ... (Instal·lar certificat)", completed: false }
-            ],
-            deliverables: [3,4]
+                { id: 'f2_1', role: 'admin', text: "Obriu el PowerShell com a administrador i creeu una carpeta temporal (ex. C:\\temp).", completed: false },
+                { id: 'f2_2', role: 'admin', text: "Creeu un fitxer servercert.inf utilitzant el Bloc de Notes amb la configuració requerida (Subject CN=ca.nexus.test, etc.).", completed: false },
+                { id: 'f2_3', role: 'admin', text: "Genereu la petició executant: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
+                { id: 'f2_4', role: 'admin', text: "Envieu la petició: certreq -submit -attrib \"CertificateTemplate:WebServer\" C:\\temp\\servercert.req C:\\temp\\servercert.cer (Seleccioneu CA).", completed: false },
+                { id: 'f2_5', role: 'admin', text: "Consola CA -> Pending Requests -> Clic dret sobre petició -> Issue (Emetre).", completed: false },
+                { id: 'f2_6', role: 'admin', text: "Recupereu certificat: certreq -retrieve [ID] C:\\temp\\servercert_issued.cer", completed: false },
+                { id: 'f2_7', role: 'admin', text: "Instal·leu certificat: certreq -accept C:\\temp\\servercert_issued.cer", completed: false }
+            ]
         },
         {
-            id: 'phase4',
-            title: "Portal Web i IIS",
-            description: "Afegir el rol de Web Enrollment per permetre peticions via navegador.",
+            id: 'f3',
+            icon: '🌐',
+            title: 'Fase 3: Portal Web i IIS',
+            desc: 'Instal·lació de l\'entorn web d\'inscripció de certificats i configuració inicial.',
             tasks: [
-                { id: 'p4-1', role: 'admin', text: "Server Manager: Afegir servei de rol 'Certification Authority Web Enrollment'.", completed: false },
-                { id: 'p4-2', role: 'admin', text: "Executar configuració post-instal·lació per Web Enrollment.", completed: false }
-            ],
-            deliverables: []
+                { id: 'f3_1', role: 'admin', text: "Obriu l'Administrador de l'IIS (Internet Information Services).", completed: false },
+                { id: 'f3_2', role: 'admin', text: "Aneu a 'Default Web Site', seleccioneu Bindings (Enllaços) i afegiu-ne un de nou tipus https al port 443.", completed: false },
+                { id: 'f3_3', role: 'admin', text: "Seleccioneu el certificat SSL instal·lat a la Fase 2 ('Certificat Web Nexus').", completed: false },
+                { id: 'f3_4', role: 'admin', text: "Provar accés local: Des del navegador del propi servidor, comproveu accés a https://localhost/certsrv", completed: false }
+            ]
         },
         {
-            id: 'phase5',
-            title: "Configuració IIS",
-            description: "Enllaçar el certificat SSL al lloc web per defecte per habilitar HTTPS.",
+            id: 'f4',
+            icon: '🔗',
+            title: 'Fase 4: Configuració IIS final',
+            desc: 'Vinculació i comprovació definitiva de l\'accés al portal via nom de domini intern.',
             tasks: [
-                { id: 'p5-1', role: 'admin', text: "Obrir IIS Manager -> Default Web Site.", completed: false },
-                { id: 'p5-2', role: 'admin', text: "Bindings (Enllaços): Afegir HTTPS port 443.", completed: false },
-                { id: 'p5-3', role: 'admin', text: "Seleccionar 'Certificat Web Nexus'.", completed: false },
-                { id: 'p5-4', role: 'admin', text: "Provar accés local: https://localhost/certsrv", completed: false }
-            ],
-            deliverables: [5]
+                { id: 'f4_1', role: 'admin', text: "Obriu l'Administrador de l'IIS.", completed: false },
+                { id: 'f4_2', role: 'admin', text: "Aneu a 'Default Web Site', comproveu Bindings (https port 443).", completed: false },
+                { id: 'f4_3', role: 'admin', text: "Assegureu-vos de tenir seleccionat el certificat SSL correcte.", completed: false },
+                { id: 'f4_4', role: 'admin', text: "Provar accés extern (nom domini): Des del navegador del propi servidor, comproveu https://ca.nexus.test/certsrv", completed: false }
+            ]
         },
         {
-            id: 'phase6',
-            title: "Client i Signatura PDF",
-            description: "Procés col·laboratiu final: el client confia en la CA, demana certificat i signa un document.",
+            id: 'f5',
+            icon: '🧑‍💻',
+            title: 'Fase 5: Sol·licitud Client',
+            desc: 'Interacció entre l\'usuari final i l\'administrador per obtenir un certificat personal de confiança.',
             tasks: [
-                { id: 'p6-1', role: 'client', text: "Client: Accedir a https://IP_servidor/certsrv (acceptar error seguretat).", completed: false },
-                { id: 'p6-2', role: 'client', text: "Client: Descarregar certificat CA Arrel del portal.", completed: false },
-                { id: 'p6-3', role: 'client', text: "Client: Instal·lar CA a 'Entitats de certificació arrel de confiança'. Reiniciar navegador.", completed: false },
-                { id: 'p6-4', role: 'client', text: "Client: Demanar certificat d'usuari via web. Avisar Admin.", completed: false },
-                { id: 'p6-5', role: 'admin', text: "Admin: Consola CA -> Pending Requests -> Emetre (Issue) el certificat.", completed: false },
-                { id: 'p6-6', role: 'client', text: "Client: Web -> View Status -> Descarregar i instal·lar certificat d'usuari.", completed: false },
-                { id: 'p6-7', role: 'client', text: "Client: Obrir PDF amb Adobe/Lector i signar amb el nou certificat.", completed: false },
-                { id: 'p6-8', role: 'client', text: "Client: Tancar i reobrir PDF. Verificar 'Signatura Vàlida'.", completed: false }
-            ],
-            deliverables: [6, 7, 8, 9]
+                { id: 'f5_1', role: 'client', text: "[Client] Obriu navegador, accediu a https://ca.nexus.test/certsrv (o IP servidor). Ometeu l'alerta de seguretat.", completed: false },
+                { id: 'f5_2', role: 'client', text: "[Client] Inicieu sessió i descarregueu el certificat de la CA.", completed: false },
+                { id: 'f5_3', role: 'client', text: "[Client] Obriu certmgr.msc i instal·leu el CA Arrel a 'Entitats de certificació arrel de confiança'. Reinicieu navegador.", completed: false },
+                { id: 'f5_4', role: 'client', text: "[Client] Des del portal web (ja segur), feu petició d'un certificat d'usuari i aviseu a l'administrador.", completed: false },
+                { id: 'f5_5', role: 'admin', text: "[Admin] Torneu al servidor, consola CA -> Pending Requests -> Emeteu (Issue) la nova petició. Aviseu al client.", completed: false },
+                { id: 'f5_6', role: 'client', text: "[Client] Al portal web, consulteu l'estat de sol·licitud pendent, descarregueu i instal·leu el nou certificat personal.", completed: false }
+            ]
+        },
+        {
+            id: 'f6',
+            icon: '🖋️',
+            title: 'Fase 6: Signatura PDF',
+            desc: 'Prova de concepte final validant l\'ús pràctic del certificat emès.',
+            tasks: [
+                { id: 'f6_1', role: 'client', text: "[Client] Obriu un document PDF amb programari lector (ex. Adobe Reader).", completed: false },
+                { id: 'f6_2', role: 'client', text: "[Client] Utilitzeu l'eina 'Certificats' per Signar digitalment el document utilitzant el certificat obtingut.", completed: false },
+                { id: 'f6_3', role: 'client', text: "[Client] Deseu el PDF signat, tanqueu el programa i torneu-lo a obrir.", completed: false },
+                { id: 'f6_4', role: 'client', text: "[Client] Comproveu que el programari valida la signatura de forma correcta ('Signatura és vàlida').", completed: false }
+            ]
         }
     ],
-    deliverablesList: [
-        { id: 1, role: 'admin', title: "Captura 1: Configuració CA", desc: "Paràmetres configuració CA." },
-        { id: 2, role: 'admin', title: "Captura 2: Consola CA", desc: "Arbre desplegat i nom 'Nexus-Root-CA'." },
-        { id: 3, role: 'admin', title: "Captura 3: Consola CA", desc: "Mostrar certificat acceptat (issued)." },
-        { id: 4, role: 'admin', title: "Captura 4: PowerShell", desc: "Mostrar arxiu peticióèxit de les comandes certreq." },
-        { id: 5, role: 'admin', title: "Captura 5: IIS Bindings", desc: "Enllaç HTTPS port 443 configurat." },
-        { id: 6, role: 'client', title: "Captura 6: Magatzem Client", desc: "Certificat CA instal·lat a Arrels de Confiança." },
-        { id: 7, role: 'client', title: "Captura 7: Navegador Segur", desc: "Portal web sense errors (cadenat tancat)." },
-        { id: 8, role: 'admin', title: "Captura 8: CA Issued Certs", desc: "Mostrant certificat Web i certificat Usuari." },
-        { id: 9, role: 'client', title: "Captura 9: PDF Signat", desc: "Panell de signatura indicant 'Vàlida'." }
+    deliverables: [
+        { id: 'd1', role: 'both', text: "Terminal: Pings satisfactoris entre Client i Servidor (IP Estàtica i resolució ca.nexus.test)." },
+        { id: 'd2', role: 'admin', text: "Consola CA: Arbre mostrant la CA Standalone amb nom 'NexusX-Root-CA' en execució." },
+        { id: 'd3', role: 'admin', text: "PowerShell: Comandes 'certreq' finalitzades amb èxit per l'emissió del certificat SSL." },
+        { id: 'd4', role: 'admin', text: "IIS Manager: Pantalla de Bindings mostrant l'enllaç HTTPS i el certificat web assignat." },
+        { id: 'd5', role: 'client', text: "certmgr.msc Client: Certificat CA Arrel de Nexus instal·lat a Arrels de Confiança." },
+        { id: 'd6', role: 'client', text: "Navegador Client: Portal Web Enrollment carregat sense alertes de seguretat (cadenat tancat)." },
+        { id: 'd7', role: 'admin', text: "Consola CA: Apartat 'Issued Certificates' mostrant el cert Web i el de l'usuari." },
+        { id: 'd8', role: 'client', text: "Lector PDF: Document signat on es llegeixi clarament 'La signatura és vàlida'." }
     ]
 };
 
-// --- STATE MANAGEMENT ---
-let currentView = 'overview';
-let currentFilter = 'all';
+// --- STATE VARIABLES ---
+let currentPhaseId = null;
+let currentRoleFilter = 'all';
+let charts = { role: null, phase: null };
 
-// --- INIT & CHART SETUP ---
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    initCharts();
+    renderSidebar();
     renderDeliverables();
-    updateGlobalProgress();
+    initCharts();
+    updateGlobalState();
 });
 
-let roleChart, phaseChart;
-
-function initCharts() {
-    // Calculate Initial Data
-    const adminTasks = appData.phases.reduce((acc, p) => acc + p.tasks.filter(t => t.role === 'admin').length, 0);
-    const clientTasks = appData.phases.reduce((acc, p) => acc + p.tasks.filter(t => t.role === 'client').length, 0);
-
-    // Role Distribution Chart
-    const ctxRole = document.getElementById('roleChart').getContext('2d');
-    roleChart = new Chart(ctxRole, {
-        type: 'doughnut',
-        data: {
-            labels: ['Admin Servidor', 'Client Windows'],
-            datasets: [{
-                data: [adminTasks, clientTasks],
-                backgroundColor: ['#2563eb', '#10b981'], // Blue-600, Emerald-500
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-    // Phase Progress Chart
-    const ctxPhase = document.getElementById('phaseChart').getContext('2d');
-    phaseChart = new Chart(ctxPhase, {
-        type: 'bar',
-        data: {
-            labels: appData.phases.map(p => `Fase ${p.id.replace('phase', '')}`),
-            datasets: [{
-                label: '% Completat',
-                data: [0, 0, 0, 0, 0, 0],
-                backgroundColor: '#6366f1', // Indigo-500
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, max: 100 }
-            }
-        }
-    });
-}
-
-// --- NAVIGATION LOGIC ---
-function navigateTo(targetId) {
-    // Update UI State
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden-section'));
-    document.querySelectorAll('.nav-btn').forEach(el => {
-        el.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-medium');
-        el.classList.add('text-slate-600');
-    });
-
-    // Activate Target
-    const activeBtn = document.querySelector(`button[data-target="${targetId}"]`);
-    if (activeBtn) {
-        activeBtn.classList.remove('text-slate-600');
-        activeBtn.classList.add('bg-indigo-50', 'text-indigo-700', 'font-medium');
-    }
-
-    if (targetId.startsWith('phase')) {
-        renderPhase(targetId);
-        document.getElementById('view-phase').classList.remove('hidden-section');
-    } else if (targetId === 'deliverables') {
-        document.getElementById('view-deliverables').classList.remove('hidden-section');
-    } else {
-        document.getElementById('view-overview').classList.remove('hidden-section');
-        // Refresh charts just in case size changed while hidden
-        roleChart.resize();
-        phaseChart.resize();
-    }
-}
-
 // --- RENDER LOGIC ---
+function renderSidebar() {
+    const container = document.getElementById('nav-container');
+    
+    pkiData.phases.forEach((phase, index) => {
+        const btn = document.createElement('button');
+        btn.className = `nav-btn w-full text-left px-4 py-2.5 mt-1 rounded-lg flex items-center gap-3 transition-colors hover:bg-stone-100 text-slate-600 text-sm font-medium border border-transparent`;
+        btn.dataset.target = phase.id;
+        btn.onclick = () => navigate(phase.id);
+        
+        // Progress indicator logic inside button
+        const total = phase.tasks.length;
+        const completed = phase.tasks.filter(t => t.completed).length;
+        let statusDot = `<span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-auto" id="dot-${phase.id}"></span>`;
+        
+        btn.innerHTML = `
+            <span class="opacity-70">${phase.icon}</span>
+            <span class="truncate">${phase.title}</span>
+            ${statusDot}
+        `;
+        container.appendChild(btn);
+    });
+}
+
 function renderPhase(phaseId) {
-    const phase = appData.phases.find(p => p.id === phaseId);
+    const phase = pkiData.phases.find(p => p.id === phaseId);
     if (!phase) return;
 
-    // Header
-    document.getElementById('phase-title').textContent = phase.title;
-    document.getElementById('phase-desc').textContent = phase.description;
-
-    // Deliverables Hint Logic
-    const hintContainer = document.getElementById('phase-deliverables-hint');
-    const hintList = document.getElementById('phase-deliverables-list');
-    hintList.innerHTML = '';
+    currentPhaseId = phaseId;
     
-    if (phase.deliverables && phase.deliverables.length > 0) {
-        hintContainer.classList.remove('hidden-section');
-        phase.deliverables.forEach(delId => {
-            const del = appData.deliverablesList.find(d => d.id === delId);
-            if (del) {
-                const li = document.createElement('li');
-                li.textContent = `${del.title}: ${del.desc}`;
-                hintList.appendChild(li);
-            }
-        });
-    } else {
-        hintContainer.classList.add('hidden-section');
-    }
+    document.getElementById('phase-badge-icon').textContent = phase.icon;
+    document.getElementById('phase-title').textContent = phase.title;
+    document.getElementById('phase-desc').textContent = phase.desc;
 
-    // Tasks
-    renderTasks(phase);
+    renderTasks();
 }
 
-function renderTasks(phase) {
-    const container = document.getElementById('tasks-container');
+function renderTasks() {
+    const phase = pkiData.phases.find(p => p.id === currentPhaseId);
+    const container = document.getElementById('task-list');
     container.innerHTML = '';
     
-    let visibleCount = 0;
+    let visibleTasks = 0;
     let completedVisible = 0;
 
     phase.tasks.forEach(task => {
-        // Filter Logic
-        if (currentFilter !== 'all') {
-            if (currentFilter === 'admin' && task.role !== 'admin') return;
-            if (currentFilter === 'client' && task.role !== 'client') return;
-        }
+        // Filtering
+        if (currentRoleFilter !== 'all' && task.role !== 'both' && task.role !== currentRoleFilter) return;
         
-        visibleCount++;
+        visibleTasks++;
         if (task.completed) completedVisible++;
 
-        const row = document.createElement('div');
-        row.className = `p-4 flex items-start gap-4 transition-colors hover:bg-slate-50 ${task.completed ? 'bg-slate-50 opacity-75' : 'bg-white'}`;
-        
-        // Role Badge
-        const badgeColor = task.role === 'admin' ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200';
-        const roleLabel = task.role === 'admin' ? 'Admin' : 'Client';
-        
-        // Checkbox ID
-        const checkId = `task-${task.id}`;
+        // Role Styling
+        let roleClasses = "bg-stone-100 text-stone-600 border-stone-200";
+        let roleLabel = "Comú";
+        if (task.role === 'admin') {
+            roleClasses = "bg-sky-100 text-sky-800 border-sky-200";
+            roleLabel = "Admin";
+        } else if (task.role === 'client') {
+            roleClasses = "bg-teal-100 text-teal-800 border-teal-200";
+            roleLabel = "Client";
+        }
 
+        const row = document.createElement('label');
+        row.className = `flex items-start gap-4 p-4 cursor-pointer transition-colors hover:bg-stone-50/80 ${task.completed ? 'opacity-60 bg-stone-50' : 'bg-white'}`;
+        
         row.innerHTML = `
-            <div class="mt-1">
-                <input type="checkbox" id="${checkId}" ${task.completed ? 'checked' : ''} 
-                    class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                    onchange="toggleTask('${phase.id}', '${task.id}')">
+            <div class="mt-1 flex-shrink-0">
+                <input type="checkbox" 
+                       class="w-5 h-5 rounded border-stone-300 text-sky-600 focus:ring-sky-500 transition-all cursor-pointer"
+                       ${task.completed ? 'checked' : ''} 
+                       onchange="toggleTask('${task.id}')">
             </div>
             <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${badgeColor}">${roleLabel}</span>
+                <div class="mb-1.5">
+                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${roleClasses}">${roleLabel}</span>
                 </div>
-                <label for="${checkId}" class="text-sm text-slate-700 cursor-pointer ${task.completed ? 'line-through text-slate-400' : ''}">${task.text}</label>
+                <p class="text-sm text-slate-700 leading-relaxed ${task.completed ? 'line-through text-slate-400' : ''}">${task.text}</p>
             </div>
         `;
         container.appendChild(row);
     });
 
-    // Update Progress Badge
-    document.getElementById('phase-progress-badge').textContent = `${completedVisible}/${visibleCount}`;
+    document.getElementById('phase-counter').textContent = `${completedVisible} / ${visibleTasks}`;
 }
 
 function renderDeliverables() {
     const container = document.getElementById('deliverables-grid');
-    container.innerHTML = '';
-
-    appData.deliverablesList.forEach(del => {
+    
+    pkiData.deliverables.forEach((del, i) => {
         const card = document.createElement('div');
-        card.className = "bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex items-center justify-between";
+        card.className = "bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex items-start gap-4";
         
-        const badgeClass = del.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800';
-        
+        let icon = '📷';
+        let roleBorder = 'border-stone-200';
+        if(del.role === 'admin') roleBorder = 'border-sky-300 bg-sky-50/30';
+        if(del.role === 'client') roleBorder = 'border-teal-300 bg-teal-50/30';
+
+        card.classList.add(roleBorder.split(' ')[0]); // Apply specific border color
+
         card.innerHTML = `
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-xl">📷</div>
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <h4 class="font-bold text-slate-800 text-sm">${del.title}</h4>
-                        <span class="text-[10px] px-2 rounded-full font-bold uppercase ${badgeClass}">${del.role}</span>
-                    </div>
-                    <p class="text-xs text-slate-500">${del.desc}</p>
-                </div>
-            </div>
-            <div class="h-6 w-6 rounded-full border-2 border-slate-300 flex items-center justify-center">
-                <!-- Placeholder for check -->
-                <div class="w-3 h-3 bg-transparent rounded-full"></div>
+            <div class="text-2xl mt-1 opacity-80">${icon}</div>
+            <div>
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Lliurament ${i+1}</h4>
+                <p class="text-sm text-slate-700 leading-relaxed font-medium">${del.text}</p>
             </div>
         `;
         container.appendChild(card);
     });
 }
 
-// --- ACTION HANDLERS ---
-
-function filterTasks(filter) {
-    currentFilter = filter;
-    // Update buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        if (btn.dataset.filter === filter) {
-            btn.classList.add('active', 'bg-slate-100'); // Add basic active styles back if needed
-            // Re-apply specific color styles based on type
-            if(filter === 'admin') btn.classList.add('bg-blue-50');
-            if(filter === 'client') btn.classList.add('bg-emerald-50');
-        } else {
-            btn.classList.remove('active', 'bg-slate-100', 'bg-blue-50', 'bg-emerald-50');
-        }
-    });
-    
-    // Re-render current phase
-    const phaseId = appData.phases.find(p => p.id === document.querySelector('button[data-target].bg-indigo-50').dataset.target)?.id;
-    if (phaseId) renderPhase(phaseId);
-}
-
-function toggleTask(phaseId, taskId) {
-    const phase = appData.phases.find(p => p.id === phaseId);
-    const task = phase.tasks.find(t => t.id === taskId);
-    task.completed = !task.completed;
-    
-    // Re-render to update strikethrough and count
-    renderTasks(phase);
-    updateGlobalProgress();
-}
-
-function updateGlobalProgress() {
-    let totalTasks = 0;
-    let completedTasks = 0;
-    const phasePercentages = [];
-
-    appData.phases.forEach(p => {
-        const phaseTotal = p.tasks.length;
-        const phaseCompleted = p.tasks.filter(t => t.completed).length;
-        
-        totalTasks += phaseTotal;
-        completedTasks += phaseCompleted;
-        
-        phasePercentages.push(Math.round((phaseCompleted / phaseTotal) * 100));
+// --- INTERACTION LOGIC ---
+function navigate(targetId) {
+    // UI State updates
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide-section'));
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-50', 'text-sky-700', 'border-sky-100');
+        btn.classList.add('text-slate-600', 'border-transparent');
     });
 
-    const globalPct = Math.round((completedTasks / totalTasks) * 100);
+    // Set active button
+    const activeBtn = document.querySelector(`button[data-target="${targetId}"]`);
+    if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'border-transparent');
+        activeBtn.classList.add('bg-sky-50', 'text-sky-700', 'border-sky-100');
+    }
 
-    // Update UI Header
-    document.getElementById('global-progress-text').textContent = `${globalPct}%`;
-    document.getElementById('global-progress-bar').style.width = `${globalPct}%`;
-
-    // Update Phase Chart
-    if (phaseChart) {
-        phaseChart.data.datasets[0].data = phasePercentages;
-        phaseChart.update();
+    // Route
+    if (targetId === 'dashboard') {
+        document.getElementById('view-dashboard').classList.remove('hide-section');
+        if(charts.role) charts.role.resize();
+        if(charts.phase) charts.phase.resize();
+    } else if (targetId === 'deliverables') {
+        document.getElementById('view-deliverables').classList.remove('hide-section');
+    } else {
+        renderPhase(targetId);
+        document.getElementById('view-phase').classList.remove('hide-section');
     }
 }
 
-// Add simple fade-in animation
-const style = document.createElement('style');
-style.innerHTML = `
-    .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    .active-filter { background-color: #e2e8f0; } 
-`;
-document.head.appendChild(style);
+function setFilter(role) {
+    currentRoleFilter = role;
+    
+    // Update button styles
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active-filter', 'bg-stone-100', 'bg-sky-50', 'bg-teal-50');
+        if (btn.dataset.role === role) {
+            btn.classList.add('active-filter');
+            if(role === 'all') btn.classList.add('bg-stone-100');
+            if(role === 'admin') btn.classList.add('bg-sky-50');
+            if(role === 'client') btn.classList.add('bg-teal-50');
+        }
+    });
+
+    renderTasks();
+}
+
+function toggleTask(taskId) {
+    // Find and toggle
+    for (let phase of pkiData.phases) {
+        let task = phase.tasks.find(t => t.id === taskId);
+        if (task) {
+            task.completed = !task.completed;
+            break;
+        }
+    }
+    
+    renderTasks();
+    updateGlobalState();
+}
+
+// --- DATA & CHARTS LOGIC ---
+function updateGlobalState() {
+    let totalTasks = 0;
+    let completedTasks = 0;
+    let phaseData = [];
+
+    pkiData.phases.forEach(phase => {
+        const pTotal = phase.tasks.length;
+        const pComp = phase.tasks.filter(t => t.completed).length;
+        
+        totalTasks += pTotal;
+        completedTasks += pComp;
+        
+        const pct = pTotal === 0 ? 0 : Math.round((pComp / pTotal) * 100);
+        phaseData.push(pct);
+
+        // Update Sidebar Dot
+        const dot = document.getElementById(`dot-${phase.id}`);
+        if (dot) {
+            dot.className = `w-2 h-2 rounded-full ml-auto ${pct === 100 ? 'bg-emerald-500' : (pct > 0 ? 'bg-amber-400' : 'bg-slate-300')}`;
+        }
+    });
+
+    // Global Progress Bar
+    const globalPct = Math.round((completedTasks / totalTasks) * 100) || 0;
+    document.getElementById('global-progress-text').textContent = `${globalPct}%`;
+    document.getElementById('global-progress-bar').style.width = `${globalPct}%`;
+
+    // Update Chart
+    if (charts.phase) {
+        charts.phase.data.datasets[0].data = phaseData;
+        charts.phase.update();
+    }
+}
+
+function initCharts() {
+    // Calculate Role Distribution
+    let counts = { admin: 0, client: 0, both: 0 };
+    pkiData.phases.forEach(p => {
+        p.tasks.forEach(t => {
+            counts[t.role]++;
+        });
+    });
+
+    // Doughnut Chart (Roles)
+    const ctxRole = document.getElementById('roleChart').getContext('2d');
+    charts.role = new Chart(ctxRole, {
+        type: 'doughnut',
+        data: {
+            labels: ['Admin Servidor', 'Client Windows', 'Comú'],
+            datasets: [{
+                data: [counts.admin, counts.client, counts.both],
+                backgroundColor: ['#0ea5e9', '#14b8a6', '#94a3b8'], // Sky-500, Teal-500, Slate-400
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: {family: 'system-ui', size: 11} } }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // Bar Chart (Phases)
+    const ctxPhase = document.getElementById('phaseChart').getContext('2d');
+    charts.phase = new Chart(ctxPhase, {
+        type: 'bar',
+        data: {
+            labels: ['Cfg', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6'],
+            datasets: [{
+                label: '% Completat',
+                data: [0, 0, 0, 0, 0, 0, 0], // Initialized via updateGlobalState
+                backgroundColor: '#38bdf8', // Sky-400
+                borderRadius: 4,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, grid: { color: '#f5f5f4' } },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) { return context.parsed.y + '% completat'; }
+                    }
+                }
+            }
+        }
+    });
+}

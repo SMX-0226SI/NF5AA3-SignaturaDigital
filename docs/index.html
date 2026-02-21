@@ -3,236 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projecte Nexus PKI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <title>Guia d'Implementació PKI - Nexus</title>
     
+    <!-- CSS Framework -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- JS Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Chosen Palette: Stone (Backgrounds) + Sky Blue (Admin/Server) + Teal (Client/User) + Slate (Text). Minimalist and calm to reduce cognitive load during complex technical tasks. -->
+    
+    <!-- Application Structure Plan: 
+         1. Dashboard/Overview: Shows the big picture, global progress, role distribution (Chart.js), and the critical IP configuration table from the source. Acts as the command center.
+         2. Interactive Sidebar: Allows non-linear navigation through the Setup and the 6 Phases defined in the source.
+         3. Dynamic Task View: When a phase is selected, it displays contextual instructions and an interactive checklist of tasks. Includes role filters (Admin/Client) so students can isolate their specific responsibilities, addressing the collaborative nature of the activity.
+         4. Deliverables Tracker: A synthesized checklist of required screenshots based on the milestone tasks described in the document.
+         Rationale: Converts a static markdown guide into an actionable, trackable project management tool suitable for paired work.
+    -->
+    
+    <!-- Visualization & Content Choices:
+         - IP Configuration (HTML Table): Presents the Group A/B networking setup clearly. Interaction: None, purely informative.
+         - Workload Distribution (Chart.js Doughnut): Visualizes the number of tasks assigned to Admin vs. Client. Goal: Inform pairs of their respective workloads.
+         - Phase Progress (Chart.js Bar): Shows completion percentage of each phase. Goal: Motivate and track advancement.
+         - Interactive Checklists (HTML/JS): Converts text steps into checkable items. Goal: Active tracking of the deployment process.
+         - Confirmation: NO SVG or Mermaid. Used standard Unicode emojis for iconography.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-stone-50 text-slate-800 font-sans h-screen flex flex-col overflow-hidden">
 
     <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-lg z-10 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <header class="bg-slate-900 text-stone-100 shadow-md z-20 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="text-3xl">🛡️</span>
+                <span class="text-3xl">🔐</span>
                 <div>
-                    <h1 class="text-xl font-bold tracking-wide">SMX 2n Escola Pia Mataró</h1>
-                    <p class="text-xs text-slate-400">Projecte Nexus</p>
+                    <h1 class="text-xl font-bold tracking-tight">Projecte PKI Nexus</h1>
+                    <p class="text-xs text-slate-400">Guia d'Implementació Interactiva</p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="text-right">
-                    <p class="text-xs text-slate-400 uppercase tracking-wider">Progrés Global</p>
-                    <p class="text-lg font-bold text-indigo-400" id="global-progress-text">0%</p>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Progrés Total</p>
+                    <p class="text-xl font-bold text-sky-400" id="global-progress-text">0%</p>
                 </div>
-                <div class="w-32 h-2 bg-slate-700 rounded-full overflow-hidden">
-                    <div id="global-progress-bar" class="h-full bg-indigo-500 transition-all duration-500" style="width: 0%"></div>
+                <div class="w-32 sm:w-48 h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div id="global-progress-bar" class="h-full bg-sky-500 transition-all duration-500 ease-out" style="width: 0%"></div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Layout -->
-    <div class="flex flex-1 overflow-hidden max-w-7xl mx-auto w-full">
+    <!-- Main Workspace -->
+    <div class="flex flex-1 overflow-hidden w-full max-w-screen-2xl mx-auto">
         
-        <!-- Sidebar Navigation -->
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto custom-scroll">
-            <div class="p-6">
-                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Navegació</h2>
-                <nav class="space-y-2">
-                    <button onclick="navigateTo('overview')" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors bg-indigo-50 text-indigo-700 font-medium" data-target="overview">
-                        <span>📊</span> Resum del Projecte
+        <!-- Sidebar -->
+        <aside class="w-72 bg-white border-r border-stone-200 flex flex-col shrink-0 overflow-y-auto custom-scrollbar z-10 shadow-sm">
+            <div class="p-5">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Navegació Principal</p>
+                <nav class="space-y-1" id="nav-container">
+                    <button onclick="navigate('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors bg-sky-50 text-sky-700 font-semibold border border-sky-100" data-target="dashboard">
+                        <span>📊</span> Tauler de Control
                     </button>
-                    <div class="pt-4 pb-2">
-                        <p class="text-[10px] text-slate-400 uppercase font-bold px-4 mb-2">Fases d'Implementació</p>
-                        <button onclick="navigateTo('phase1')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase1">
-                            <span class="text-slate-400">1.</span> Configuració servidor
-                        </button>
-                        <button onclick="navigateTo('phase2')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase2">
-                            <span class="text-slate-400">2.</span> Instal·lació CA Arrel
-                        </button>
-                        <button onclick="navigateTo('phase3')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase3">
-                            <span class="text-slate-400">3.</span> Generació Certificat SSL
-                        </button>
-                        <button onclick="navigateTo('phase4')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase4">
-                            <span class="text-slate-400">4.</span> Portal Web i IIS
-                        </button>
-                        <button onclick="navigateTo('phase5')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase5">
-                            <span class="text-slate-400">5.</span> Configuració IIS
-                        </button>
-                        <button onclick="navigateTo('phase6')" class="nav-btn w-full text-left px-4 py-2 rounded-lg flex items-center gap-3 hover:bg-slate-50 text-slate-600 text-sm" data-target="phase6">
-                            <span class="text-slate-400">6.</span> Client i Signatura PDF
-                        </button>
-                    </div>
-                    <button onclick="navigateTo('deliverables')" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors hover:bg-slate-50 text-slate-600 font-medium border-t border-slate-100 mt-2" data-target="deliverables">
-                        <span>📷</span> Lliuraments (Captures)
-                    </button>
+                    <!-- Phase links injected here by JS -->
                 </nav>
+
+                <div class="mt-8 border-t border-stone-100 pt-6">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Lliuraments</p>
+                    <button onclick="navigate('deliverables')" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors hover:bg-stone-50 text-slate-600 font-medium" data-target="deliverables">
+                        <span>📷</span> Llista de Captures
+                    </button>
+                </div>
             </div>
-            
-            <div class="mt-auto p-6 bg-slate-50 border-t border-slate-200">
-                <h3 class="text-xs font-bold text-slate-500 mb-2">Llegenda de Rols</h3>
-                <div class="flex flex-col gap-2 text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-blue-600"></span> Admin Servidor (A)
+
+            <!-- Role Legend -->
+            <div class="mt-auto p-5 bg-stone-50 border-t border-stone-200">
+                <h3 class="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wide">Llegenda de Rols</h3>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2 text-sm bg-sky-100/50 px-3 py-2 rounded border border-sky-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-sm"></span> 
+                        <span class="font-medium text-sky-900">Admin Servidor</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Client Windows (B)
+                    <div class="flex items-center gap-2 text-sm bg-teal-100/50 px-3 py-2 rounded border border-teal-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-sm"></span> 
+                        <span class="font-medium text-teal-900">Client Windows</span>
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto custom-scroll p-8 bg-slate-50 relative">
+        <main class="flex-1 overflow-y-auto custom-scrollbar bg-stone-50/50 relative">
             
-            <!-- VIEW: OVERVIEW -->
-            <section id="view-overview" class="view-section animate-fade-in">
-                <div class="max-w-4xl mx-auto">
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Prova de Concepte: PKI Corporativa i signatura electrònica</h2>
-                        <p class="text-slate-600 leading-relaxed">
-                           El client <strong> Projecte Nexus</strong> us ha demanat modernitzar la seva seguretat. 
-                           Necessiten garantir la integritat i no repudi dels seus documents interns.
+            <!-- VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="view-section p-8 fade-in">
+                <div class="max-w-5xl mx-auto">
+                    <header class="mb-8">
+                        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Resum de la Missió</h2>
+                        <p class="text-slate-600 mt-2 text-lg">
+                            Desplegament d'una Infraestructura de Clau Pública (PKI) Independent per a l'organització Nexus.
+                            Coordineu-vos amb la vostra parella per completar totes les fases.
                         </p>
-                        <p class="text-slate-600 leading-relaxed">
-                            <strong>La vostra missió:</strong>Desplegar una infraestructura PKI basada en Windows Server 2025 
-                            perquè els empleats de Nexus puguin obtenir certificats i signar PDFs oficialment.
-                        </p>
-                        <p class="text-slate-600 leading-relaxed">
-                            <strong>Definició del problema:</strong> El client vol una infraestructura de PKI que inclogui un portal per la gestió dels certificats. 
-                            Windows Server disposa d'un rol específic per fer aquesta funció. Normalment, integrat dins un `Active Directory`, però 
-                            en aquest projecte realitzarem un desplegament sense directori o "Standalone", més flexible però amb més passos manuals.
-                        </p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                <h3 class="font-semibold text-slate-800 mb-2">🎯 Objectius Clau</h3>
-                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                    <li>Instal·lar CA a Windows Server 2025.</li>
-                                    <li>Habilitar inscripció web (IIS).</li>
-                                    <li>Generar certificats d'usuari.</li>
-                                    <li>Signar i verificar un PDF.</li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                <h3 class="font-semibold text-slate-800 mb-2">⚙️ Requisits Tècnics</h3>
-                                <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                    <li>VM Windows Server 2025 (adaptador pont).</li>
-                                    <li>VM Client Windows 10/11 (adaptador pont).</li>
-                                    <li>Adobe Acrobat Reader instal·lat al client.</li>
-                                    <li>Treball en Parelles (Admin/Client).</li>
-                                </ul>
-                            </div>
-                    </div>
+                    </header>
 
-                    <!-- Dashboard Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Top Row: IP Config & Role Distribution -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         
-                        <!-- Role Info Card -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">Dinàmica de Parelles</h3>
-                            <p class="text-sm text-slate-500 mb-4">El projecte requereix coordinació entre dos rols. Utilitzeu els filtres a cada fase per veure només les vostres tasques.</p>
+                        <!-- IP Config Table (From source text) -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="text-xl">⚙️</span>
+                                <h3 class="text-lg font-bold text-slate-800">Paràmetres de Xarxa</h3>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-4">Esquema d'adreçament IP segons el vostre grup-classe (Configuració Inicial):</p>
                             
-                            <div class="space-y-4">
-                                <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0">A</div>
-                                    <div>
-                                        <h4 class="font-bold text-blue-900 text-sm">Administrador del Servidor</h4>
-                                        <p class="text-xs text-blue-700">Gestiona Windows Server 2025, instal·la rols (AD CS, IIS) i emet certificats.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                    <div class="bg-emerald-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0">B</div>
-                                    <div>
-                                        <h4 class="font-bold text-emerald-900 text-sm">Usuari Client Windows 11</h4>
-                                        <p class="text-xs text-emerald-700">Accedeix al portal web, instal·la confiança, demana certificats i signa PDFs.</p>
-                                    </div>
-                                </div>
+                            <div class="overflow-x-auto rounded-lg border border-stone-200">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-stone-100 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                                        <tr>
+                                            <th class="px-4 py-3">Grup-classe</th>
+                                            <th class="px-4 py-3">IP</th>
+                                            <th class="px-4 py-3">Màscara</th>
+                                            <th class="px-4 py-3">Gateway</th>
+                                            <th class="px-4 py-3">DNS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-stone-100">
+                                        <tr class="bg-white">
+                                            <td class="px-4 py-3 font-bold text-slate-800">A</td>
+                                            <td class="px-4 py-3 font-mono text-sky-700">192.168.2.x</td>
+                                            <td class="px-4 py-3 font-mono">255.255.255.0</td>
+                                            <td class="px-4 py-3 font-mono">192.168.2.254</td>
+                                            <td class="px-4 py-3 font-mono">8.8.8.8</td>
+                                        </tr>
+                                        <tr class="bg-stone-50">
+                                            <td class="px-4 py-3 font-bold text-slate-800">B</td>
+                                            <td class="px-4 py-3 font-mono text-sky-700">192.168.4.x</td>
+                                            <td class="px-4 py-3 font-mono">255.255.255.0</td>
+                                            <td class="px-4 py-3 font-mono">192.168.4.254</td>
+                                            <td class="px-4 py-3 font-mono">8.8.8.8</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <!-- Charts Column -->
-                        <div class="space-y-6">
-                            <!-- Task Distribution Chart -->
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <h3 class="text-sm font-bold text-slate-500 uppercase mb-4">Càrrega de Treball per Rol</h3>
-                                <div class="chart-container h-48">
-                                    <canvas id="roleChart"></canvas>
-                                </div>
+                        <!-- Chart: Role Distribution -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col">
+                            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Distribució de Tasques</h3>
+                            <p class="text-xs text-slate-400 mb-4">Proporció de passos requerits per a cada rol.</p>
+                            <div class="chart-container flex-1 min-h-[200px]">
+                                <canvas id="roleChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Detailed Progress Chart -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-sm font-bold text-slate-500 uppercase mb-4">Progrés per Fase</h3>
-                        <div class="chart-container h-64 w-full">
+                    <!-- Bottom Row: Progress Chart -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Avançament per Fases</h3>
+                        <p class="text-xs text-slate-400 mb-4">Percentatge de tasques completades en cada etapa del projecte.</p>
+                        <div class="chart-container w-full">
                             <canvas id="phaseChart"></canvas>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- VIEW: PHASES (Generic Template, populated by JS) -->
-            <section id="view-phase" class="view-section hidden-section">
+            <!-- VIEW: DYNAMIC PHASE -->
+            <section id="view-phase" class="view-section p-8 hide-section fade-in">
                 <div class="max-w-4xl mx-auto">
-                    <!-- Phase Header -->
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold mb-2 uppercase tracking-wide">Fase Activa</span>
-                            <h2 id="phase-title" class="text-3xl font-bold text-slate-800">Fase X: Títol</h2>
-                            <p id="phase-desc" class="text-slate-500 mt-2">Descripció de la fase...</p>
-                        </div>
-                        
-                        <!-- Role Toggle Filter -->
-                        <div class="bg-white border border-slate-200 rounded-lg p-1 flex gap-1 shadow-sm">
-                            <button onclick="filterTasks('all')" class="filter-btn active px-3 py-1.5 text-xs font-bold rounded hover:bg-slate-100 text-slate-600 transition-colors" data-filter="all">Tots</button>
-                            <button onclick="filterTasks('admin')" class="filter-btn px-3 py-1.5 text-xs font-bold rounded hover:bg-blue-50 text-blue-600 transition-colors" data-filter="admin">Admin (A)</button>
-                            <button onclick="filterTasks('client')" class="filter-btn px-3 py-1.5 text-xs font-bold rounded hover:bg-emerald-50 text-emerald-600 transition-colors" data-filter="client">Client (B)</button>
-                        </div>
-                    </div>
-
-                    <!-- Task List Container -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-                        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
-                            <h3 class="font-bold text-slate-700">Llista de Tasques</h3>
-                            <span id="phase-progress-badge" class="px-2 py-1 bg-slate-200 text-slate-600 text-xs rounded font-mono">0/0</span>
-                        </div>
-                        <div id="tasks-container" class="divide-y divide-slate-100">
-                            <!-- Tasks injected via JS -->
-                        </div>
-                    </div>
-
-                    <!-- Phase Specific Deliverables Hint -->
-                    <div id="phase-deliverables-hint" class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg hidden-section">
-                        <div class="flex items-start">
-                            <span class="text-2xl mr-3">📸</span>
+                    
+                    <!-- Phase Header & Filters -->
+                    <div class="mb-8">
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <h4 class="font-bold text-amber-800 text-sm">Captures Requerides en aquesta Fase</h4>
-                                <ul id="phase-deliverables-list" class="mt-1 text-sm text-amber-700 list-disc list-inside">
-                                    <!-- List items injected JS -->
-                                </ul>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-bold uppercase tracking-wider mb-3">
+                                    <span id="phase-badge-icon">📍</span> <span id="phase-badge-text">Fase Activa</span>
+                                </div>
+                                <h2 id="phase-title" class="text-3xl font-bold text-slate-800 tracking-tight">Títol de la Fase</h2>
+                                <p id="phase-desc" class="text-slate-500 mt-2 text-lg">Descripció detallada de la fase actual.</p>
+                            </div>
+                            
+                            <!-- Role Filter -->
+                            <div class="bg-white p-1 rounded-lg border border-stone-200 shadow-sm flex gap-1 shrink-0">
+                                <button onclick="setFilter('all')" class="filter-btn active-filter px-4 py-2 text-xs font-bold rounded-md transition-all text-slate-700 bg-stone-100" data-role="all">Totes</button>
+                                <button onclick="setFilter('admin')" class="filter-btn px-4 py-2 text-xs font-bold rounded-md transition-all text-sky-600 hover:bg-sky-50" data-role="admin">Admin</button>
+                                <button onclick="setFilter('client')" class="filter-btn px-4 py-2 text-xs font-bold rounded-md transition-all text-teal-600 hover:bg-teal-50" data-role="client">Client</button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Task List -->
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                        <div class="bg-stone-50 px-6 py-3 border-b border-stone-200 flex justify-between items-center">
+                            <span class="font-bold text-slate-700 text-sm uppercase tracking-wide">Llista de Control</span>
+                            <span id="phase-counter" class="bg-white px-3 py-1 rounded border border-stone-200 text-xs font-mono font-bold text-slate-600 shadow-sm">0 / 0</span>
+                        </div>
+                        <div id="task-list" class="divide-y divide-stone-100">
+                            <!-- Tasks injected here -->
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
-            <!-- VIEW: DELIVERABLES -->
-            <section id="view-deliverables" class="view-section hidden-section">
+            <!-- VIEW: DELIVERABLES (Captures) -->
+            <section id="view-deliverables" class="view-section p-8 hide-section fade-in">
                 <div class="max-w-4xl mx-auto">
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Llista de Lliuraments</h2>
-                        <p class="text-slate-600">
-                            Assegureu-vos de tenir totes les captures de pantalla requerides per a la memòria tècnica final.
-                            El document final ha de ser una guia única (la mateixa pels dos membres de l'equip) en format MarkDown on
-                            a més de les captures de pantalla indicades, expliqueu el procediment que s'ha seguit per aconseguir-les.
+                    <header class="mb-8">
+                        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Captures i Lliuraments</h2>
+                        <p class="text-slate-600 mt-2 text-sm">
+                            Relació de captures de pantalla que mostre l'assoliment de cadascuna de les fases de l'activitat.
                         </p>
-                    </div>
+                        <p class="text-slate-600 mt-2 text-lg">
+                            És important que acompanyeu aquestes captures amb descripcions clares i detallades, 
+                            així com de captures de pantalla de les passes prèvies que ajudin a entendre el procediment realitzat.
+                        </p>
+                    </header>
 
-                    <div class="grid grid-cols-1 gap-4" id="deliverables-grid">
-                        <!-- Deliverable Cards injected via JS -->
+                    <div id="deliverables-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Deliverables injected here -->
                     </div>
                 </div>
             </section>
@@ -240,7 +234,395 @@
         </main>
     </div>
 
-    <!-- JavaScript Logic -->
-    <script src="scripts.js"></script>
+    <!-- Application Logic -->
+    <script src="../scripts.js"></script>
+</body>
+</html>
+                    desc: 'Preparació de l\'entorn de xarxa i màquines virtuals abans de començar el desplegament.',
+                    tasks: [
+                        { id: 'c1', role: 'both', text: "Instal·lar Windows Server 2025 i Windows 11 a les VMs. Configurar adaptadors de xarxa en mode pont per accés directe.", completed: false },
+                        { id: 'c2', role: 'admin', text: "Inicialment, el servidor no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.", completed: false },
+                        { id: 'c3', role: 'both', text: "Configurar una IP estàtica al servidor i client segons l'esquema del grup-classe (veure Tauler de Control).", completed: false },
+                        { id: 'c4', role: 'admin', text: "Canviar el nom del servidor a SRV-CA-0X on X és el número del vostre grup.", completed: false },
+                        { id: 'c5', role: 'client', text: "Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.", completed: false }
+                    ]
+                },
+                {
+                    id: 'f1',
+                    icon: '🏗️',
+                    title: 'Fase 1: Instal·lació CA Arrel',
+                    desc: 'Desplegament del servei base de l\'Autoritat de Certificació (Active Directory Certificate Services).',
+                    tasks: [
+                        { id: 'f1_1', role: 'admin', text: "Obriu l'Administrador del Servidor (Server Manager) i afegiu el rol d'Active Directory Certificate Services (AD CS).", completed: false },
+                        { id: 'f1_2', role: 'admin', text: "Durant la selecció de serveis de rol, marqueu només Certification Authority. Completa la instal·lació.", completed: false },
+                        { id: 'f1_3', role: 'admin', text: "Inicieu la configuració post-instal·lació (bandera de notificacions).", completed: false },
+                        { id: 'f1_4', role: 'admin', text: "Configuració: Tipus d'instal·lació: Standalone CA (CA Independent).", completed: false },
+                        { id: 'f1_5', role: 'admin', text: "Configuració: Tipus de CA: Root CA (CA Arrel).", completed: false },
+                        { id: 'f1_6', role: 'admin', text: "Configuració: Clau privada: Creeu una nova clau privada amb longitud de 4096 bits.", completed: false },
+                        { id: 'f1_7', role: 'admin', text: "Configuració: Nom de la CA: NexusX-Root-CA (on X és el grup). Validesa: 5 anys.", completed: false }
+                    ]
+                },
+                {
+                    id: 'f2',
+                    icon: '📜',
+                    title: 'Fase 2: Generació Certificat SSL',
+                    desc: 'Creació de la petició, emissió i instal·lació del certificat SSL per assegurar el portal web.',
+                    tasks: [
+                        { id: 'f2_1', role: 'admin', text: "Obriu el PowerShell com a administrador i creeu una carpeta temporal (ex. C:\\temp).", completed: false },
+                        { id: 'f2_2', role: 'admin', text: "Creeu un fitxer servercert.inf utilitzant el Bloc de Notes amb la configuració requerida (Subject CN=ca.nexus.test, etc.).", completed: false },
+                        { id: 'f2_3', role: 'admin', text: "Genereu la petició executant: certreq -new C:\\temp\\servercert.inf C:\\temp\\servercert.req", completed: false },
+                        { id: 'f2_4', role: 'admin', text: "Envieu la petició: certreq -submit -attrib \"CertificateTemplate:WebServer\" C:\\temp\\servercert.req C:\\temp\\servercert.cer (Seleccioneu CA).", completed: false },
+                        { id: 'f2_5', role: 'admin', text: "Consola CA -> Pending Requests -> Clic dret sobre petició -> Issue (Emetre).", completed: false },
+                        { id: 'f2_6', role: 'admin', text: "Recupereu certificat: certreq -retrieve [ID] C:\\temp\\servercert_issued.cer", completed: false },
+                        { id: 'f2_7', role: 'admin', text: "Instal·leu certificat: certreq -accept C:\\temp\\servercert_issued.cer", completed: false }
+                    ]
+                },
+                {
+                    id: 'f3',
+                    icon: '🌐',
+                    title: 'Fase 3: Portal Web i IIS',
+                    desc: 'Instal·lació de l\'entorn web d\'inscripció de certificats i configuració inicial.',
+                    tasks: [
+                        { id: 'f3_1', role: 'admin', text: "Obriu l'Administrador de l'IIS (Internet Information Services).", completed: false },
+                        { id: 'f3_2', role: 'admin', text: "Aneu a 'Default Web Site', seleccioneu Bindings (Enllaços) i afegiu-ne un de nou tipus https al port 443.", completed: false },
+                        { id: 'f3_3', role: 'admin', text: "Seleccioneu el certificat SSL instal·lat a la Fase 2 ('Certificat Web Nexus').", completed: false },
+                        { id: 'f3_4', role: 'admin', text: "Provar accés local: Des del navegador del propi servidor, comproveu accés a https://localhost/certsrv", completed: false }
+                    ]
+                },
+                {
+                    id: 'f4',
+                    icon: '🔗',
+                    title: 'Fase 4: Configuració IIS final',
+                    desc: 'Vinculació i comprovació definitiva de l\'accés al portal via nom de domini intern.',
+                    tasks: [
+                        { id: 'f4_1', role: 'admin', text: "Obriu l'Administrador de l'IIS.", completed: false },
+                        { id: 'f4_2', role: 'admin', text: "Aneu a 'Default Web Site', comproveu Bindings (https port 443).", completed: false },
+                        { id: 'f4_3', role: 'admin', text: "Assegureu-vos de tenir seleccionat el certificat SSL correcte.", completed: false },
+                        { id: 'f4_4', role: 'admin', text: "Provar accés extern (nom domini): Des del navegador del propi servidor, comproveu https://ca.nexus.test/certsrv", completed: false }
+                    ]
+                },
+                {
+                    id: 'f5',
+                    icon: '🧑‍💻',
+                    title: 'Fase 5: Sol·licitud Client',
+                    desc: 'Interacció entre l\'usuari final i l\'administrador per obtenir un certificat personal de confiança.',
+                    tasks: [
+                        { id: 'f5_1', role: 'client', text: "[Client] Obriu navegador, accediu a https://ca.nexus.test/certsrv (o IP servidor). Ometeu l'alerta de seguretat.", completed: false },
+                        { id: 'f5_2', role: 'client', text: "[Client] Inicieu sessió i descarregueu el certificat de la CA.", completed: false },
+                        { id: 'f5_3', role: 'client', text: "[Client] Obriu certmgr.msc i instal·leu el CA Arrel a 'Entitats de certificació arrel de confiança'. Reinicieu navegador.", completed: false },
+                        { id: 'f5_4', role: 'client', text: "[Client] Des del portal web (ja segur), feu petició d'un certificat d'usuari i aviseu a l'administrador.", completed: false },
+                        { id: 'f5_5', role: 'admin', text: "[Admin] Torneu al servidor, consola CA -> Pending Requests -> Emeteu (Issue) la nova petició. Aviseu al client.", completed: false },
+                        { id: 'f5_6', role: 'client', text: "[Client] Al portal web, consulteu l'estat de sol·licitud pendent, descarregueu i instal·leu el nou certificat personal.", completed: false }
+                    ]
+                },
+                {
+                    id: 'f6',
+                    icon: '🖋️',
+                    title: 'Fase 6: Signatura PDF',
+                    desc: 'Prova de concepte final validant l\'ús pràctic del certificat emès.',
+                    tasks: [
+                        { id: 'f6_1', role: 'client', text: "[Client] Obriu un document PDF amb programari lector (ex. Adobe Reader).", completed: false },
+                        { id: 'f6_2', role: 'client', text: "[Client] Utilitzeu l'eina 'Certificats' per Signar digitalment el document utilitzant el certificat obtingut.", completed: false },
+                        { id: 'f6_3', role: 'client', text: "[Client] Deseu el PDF signat, tanqueu el programa i torneu-lo a obrir.", completed: false },
+                        { id: 'f6_4', role: 'client', text: "[Client] Comproveu que el programari valida la signatura de forma correcta ('Signatura és vàlida').", completed: false }
+                    ]
+                }
+            ],
+            deliverables: [
+                { id: 'd1', role: 'both', text: "Terminal: Pings satisfactoris entre Client i Servidor (IP Estàtica i resolució ca.nexus.test)." },
+                { id: 'd2', role: 'admin', text: "Consola CA: Arbre mostrant la CA Standalone amb nom 'NexusX-Root-CA' en execució." },
+                { id: 'd3', role: 'admin', text: "PowerShell: Comandes 'certreq' finalitzades amb èxit per l'emissió del certificat SSL." },
+                { id: 'd4', role: 'admin', text: "IIS Manager: Pantalla de Bindings mostrant l'enllaç HTTPS i el certificat web assignat." },
+                { id: 'd5', role: 'client', text: "certmgr.msc Client: Certificat CA Arrel de Nexus instal·lat a Arrels de Confiança." },
+                { id: 'd6', role: 'client', text: "Navegador Client: Portal Web Enrollment carregat sense alertes de seguretat (cadenat tancat)." },
+                { id: 'd7', role: 'admin', text: "Consola CA: Apartat 'Issued Certificates' mostrant el cert Web i el de l'usuari." },
+                { id: 'd8', role: 'client', text: "Lector PDF: Document signat on es llegeixi clarament 'La signatura és vàlida'." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentPhaseId = null;
+        let currentRoleFilter = 'all';
+        let charts = { role: null, phase: null };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSidebar();
+            renderDeliverables();
+            initCharts();
+            updateGlobalState();
+        });
+
+        // --- RENDER LOGIC ---
+        function renderSidebar() {
+            const container = document.getElementById('nav-container');
+            
+            pkiData.phases.forEach((phase, index) => {
+                const btn = document.createElement('button');
+                btn.className = `nav-btn w-full text-left px-4 py-2.5 mt-1 rounded-lg flex items-center gap-3 transition-colors hover:bg-stone-100 text-slate-600 text-sm font-medium border border-transparent`;
+                btn.dataset.target = phase.id;
+                btn.onclick = () => navigate(phase.id);
+                
+                // Progress indicator logic inside button
+                const total = phase.tasks.length;
+                const completed = phase.tasks.filter(t => t.completed).length;
+                let statusDot = `<span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-auto" id="dot-${phase.id}"></span>`;
+                
+                btn.innerHTML = `
+                    <span class="opacity-70">${phase.icon}</span>
+                    <span class="truncate">${phase.title}</span>
+                    ${statusDot}
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderPhase(phaseId) {
+            const phase = pkiData.phases.find(p => p.id === phaseId);
+            if (!phase) return;
+
+            currentPhaseId = phaseId;
+            
+            document.getElementById('phase-badge-icon').textContent = phase.icon;
+            document.getElementById('phase-title').textContent = phase.title;
+            document.getElementById('phase-desc').textContent = phase.desc;
+
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const phase = pkiData.phases.find(p => p.id === currentPhaseId);
+            const container = document.getElementById('task-list');
+            container.innerHTML = '';
+            
+            let visibleTasks = 0;
+            let completedVisible = 0;
+
+            phase.tasks.forEach(task => {
+                // Filtering
+                if (currentRoleFilter !== 'all' && task.role !== 'both' && task.role !== currentRoleFilter) return;
+                
+                visibleTasks++;
+                if (task.completed) completedVisible++;
+
+                // Role Styling
+                let roleClasses = "bg-stone-100 text-stone-600 border-stone-200";
+                let roleLabel = "Comú";
+                if (task.role === 'admin') {
+                    roleClasses = "bg-sky-100 text-sky-800 border-sky-200";
+                    roleLabel = "Admin";
+                } else if (task.role === 'client') {
+                    roleClasses = "bg-teal-100 text-teal-800 border-teal-200";
+                    roleLabel = "Client";
+                }
+
+                const row = document.createElement('label');
+                row.className = `flex items-start gap-4 p-4 cursor-pointer transition-colors hover:bg-stone-50/80 ${task.completed ? 'opacity-60 bg-stone-50' : 'bg-white'}`;
+                
+                row.innerHTML = `
+                    <div class="mt-1 flex-shrink-0">
+                        <input type="checkbox" 
+                               class="w-5 h-5 rounded border-stone-300 text-sky-600 focus:ring-sky-500 transition-all cursor-pointer"
+                               ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask('${task.id}')">
+                    </div>
+                    <div class="flex-1">
+                        <div class="mb-1.5">
+                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${roleClasses}">${roleLabel}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed ${task.completed ? 'line-through text-slate-400' : ''}">${task.text}</p>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('phase-counter').textContent = `${completedVisible} / ${visibleTasks}`;
+        }
+
+        function renderDeliverables() {
+            const container = document.getElementById('deliverables-grid');
+            
+            pkiData.deliverables.forEach((del, i) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex items-start gap-4";
+                
+                let icon = '📷';
+                let roleBorder = 'border-stone-200';
+                if(del.role === 'admin') roleBorder = 'border-sky-300 bg-sky-50/30';
+                if(del.role === 'client') roleBorder = 'border-teal-300 bg-teal-50/30';
+
+                card.classList.add(roleBorder.split(' ')[0]); // Apply specific border color
+
+                card.innerHTML = `
+                    <div class="text-2xl mt-1 opacity-80">${icon}</div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Lliurament ${i+1}</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed font-medium">${del.text}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- INTERACTION LOGIC ---
+        function navigate(targetId) {
+            // UI State updates
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide-section'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-50', 'text-sky-700', 'border-sky-100');
+                btn.classList.add('text-slate-600', 'border-transparent');
+            });
+
+            // Set active button
+            const activeBtn = document.querySelector(`button[data-target="${targetId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'border-transparent');
+                activeBtn.classList.add('bg-sky-50', 'text-sky-700', 'border-sky-100');
+            }
+
+            // Route
+            if (targetId === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hide-section');
+                if(charts.role) charts.role.resize();
+                if(charts.phase) charts.phase.resize();
+            } else if (targetId === 'deliverables') {
+                document.getElementById('view-deliverables').classList.remove('hide-section');
+            } else {
+                renderPhase(targetId);
+                document.getElementById('view-phase').classList.remove('hide-section');
+            }
+        }
+
+        function setFilter(role) {
+            currentRoleFilter = role;
+            
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active-filter', 'bg-stone-100', 'bg-sky-50', 'bg-teal-50');
+                if (btn.dataset.role === role) {
+                    btn.classList.add('active-filter');
+                    if(role === 'all') btn.classList.add('bg-stone-100');
+                    if(role === 'admin') btn.classList.add('bg-sky-50');
+                    if(role === 'client') btn.classList.add('bg-teal-50');
+                }
+            });
+
+            renderTasks();
+        }
+
+        function toggleTask(taskId) {
+            // Find and toggle
+            for (let phase of pkiData.phases) {
+                let task = phase.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    break;
+                }
+            }
+            
+            renderTasks();
+            updateGlobalState();
+        }
+
+        // --- DATA & CHARTS LOGIC ---
+        function updateGlobalState() {
+            let totalTasks = 0;
+            let completedTasks = 0;
+            let phaseData = [];
+
+            pkiData.phases.forEach(phase => {
+                const pTotal = phase.tasks.length;
+                const pComp = phase.tasks.filter(t => t.completed).length;
+                
+                totalTasks += pTotal;
+                completedTasks += pComp;
+                
+                const pct = pTotal === 0 ? 0 : Math.round((pComp / pTotal) * 100);
+                phaseData.push(pct);
+
+                // Update Sidebar Dot
+                const dot = document.getElementById(`dot-${phase.id}`);
+                if (dot) {
+                    dot.className = `w-2 h-2 rounded-full ml-auto ${pct === 100 ? 'bg-emerald-500' : (pct > 0 ? 'bg-amber-400' : 'bg-slate-300')}`;
+                }
+            });
+
+            // Global Progress Bar
+            const globalPct = Math.round((completedTasks / totalTasks) * 100) || 0;
+            document.getElementById('global-progress-text').textContent = `${globalPct}%`;
+            document.getElementById('global-progress-bar').style.width = `${globalPct}%`;
+
+            // Update Chart
+            if (charts.phase) {
+                charts.phase.data.datasets[0].data = phaseData;
+                charts.phase.update();
+            }
+        }
+
+        function initCharts() {
+            // Calculate Role Distribution
+            let counts = { admin: 0, client: 0, both: 0 };
+            pkiData.phases.forEach(p => {
+                p.tasks.forEach(t => {
+                    counts[t.role]++;
+                });
+            });
+
+            // Doughnut Chart (Roles)
+            const ctxRole = document.getElementById('roleChart').getContext('2d');
+            charts.role = new Chart(ctxRole, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Admin Servidor', 'Client Windows', 'Comú'],
+                    datasets: [{
+                        data: [counts.admin, counts.client, counts.both],
+                        backgroundColor: ['#0ea5e9', '#14b8a6', '#94a3b8'], // Sky-500, Teal-500, Slate-400
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: {family: 'system-ui', size: 11} } }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Bar Chart (Phases)
+            const ctxPhase = document.getElementById('phaseChart').getContext('2d');
+            charts.phase = new Chart(ctxPhase, {
+                type: 'bar',
+                data: {
+                    labels: ['Cfg', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6'],
+                    datasets: [{
+                        label: '% Completat',
+                        data: [0, 0, 0, 0, 0, 0, 0], // Initialized via updateGlobalState
+                        backgroundColor: '#38bdf8', // Sky-400
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: '#f5f5f4' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.parsed.y + '% completat'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
