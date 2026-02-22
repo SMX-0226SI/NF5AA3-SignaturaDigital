@@ -8,11 +8,13 @@
 
     | Grup-classe | IP          | Mascara       | Gateway       | DNS     |
     |-------------|-------------|---------------|---------------|---------|
-    | A           | 192.168.2.x | 255.255.255.0 | 192.168.2.254 | 8.8.8.8 |
-    | B           | 192.168.4.x | 255.255.255.0 | 192.168.4.254 | 8.8.8.8 |
+    | A           | 192.168.2.y | 255.255.255.0 | 192.168.2.254 | 8.8.8.8 |
+    | B           | 192.168.4.y | 255.255.255.0 | 192.168.4.254 | 8.8.8.8 |
 
-4. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
-5. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent (192.168.2.x o 192.168.4.x).
+   > On y correspon al vostre número de llista (recordeu que un instal·la el Server i l'altre el Windows 11)
+
+5. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
+6. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.
 
 ## Fase 1: Instal·lació de la CA Arrel — [Rol: Administrador del Servidor]
 
