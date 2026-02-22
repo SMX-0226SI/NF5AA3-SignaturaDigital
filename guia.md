@@ -77,11 +77,11 @@
 1. **[Rol: Client Windows 11]** Aneu a la màquina virtual client (connectada a la mateixa xarxa que el servidor) i obriu el navegador web per accedir al portal: `https://ca.nexus.test/certsrv` (o la IP del servidor). Us mostrarà una alerta de seguretat.
 1. **[Rol: Client Windows 11]** Ometeu l'avís de moment, inicieu sessió i utilitzeu l'opció per descarregar el certificat de la CA.
 1. **[Rol: Client Windows 11]** Obriu la consola de gestió de certificats (certmgr.msc) i instal·leu el CA Arrel al magatzem de **"Entitats de certificació arrel de confiança"**. Reinicieu el navegador; ara la connexió a ca.nexus.test hauria de ser segura.
-1. **[Rol: Client Windows 11] Des del portal web ja confiat, feu una petició d'un certificat d'usuari omplint les dades requerides. Aviseu al vostre company administrador que heu realitzat la petició.
+1. **[Rol: Client Windows 11]** Des del portal web ja confiat, feu una petició d'un certificat d'usuari omplint les dades requerides. Aviseu al vostre company administrador que heu realitzat la petició.
 1. **[Rol: Administrador del Servidor]** Torneu al servidor Windows Server 2025, obriu la consola de la CA, busqueu la nova petició del vostre company a **"Pending Requests"** i emeteu-lo (Issue). Aviseu al client que ja el té disponible.
 1. **[Rol: Client Windows 11]** Aneu novament al portal web per consultar l'estat d'una sol·licitud pendent, i **descarregueu i instal·leu el vostre nou certificat d'usuari personal**.
 
 ## Fase 6: Signatura digital d'un PDF — [Rol: Client Windows 11]
 
-1. Obriu un document PDF qualsevol amb un programari lector de PDFs (com Adobe Acrobat Reader). Utilitzeu l'eina "Certificats" per Signar digitalment el document utilitzant el certificat que acabeu d'obtenir.
+1. Obriu un document PDF qualsevol amb un programari lector de PDFs (com Adobe Acrobat Reader). Utilitzeu l'opció "Certificats" per Signar digitalment el document utilitzant el certificat que acabeu d'obtenir.
 1. Deseu el document PDF signat, tanqueu el programa i torneu-lo a obrir. Comproveu que el programari valida la signatura de forma correcta ("Signatura és vàlida").
