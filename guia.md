@@ -11,7 +11,7 @@
     | A           | 192.168.2.x | 255.255.255.0 | 192.168.2.254 | 8.8.8.8 |
     | B           | 192.168.4.x | 255.255.255.0 | 192.168.4.254 | 8.8.8.8 |
 
-4. Canviar el nom del servidor a SRV-CA-0X on X és el número del vostre grup.
+4. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
 5. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent (192.168.2.x o 192.168.4.x).
 
 ## Fase 1: Instal·lació de la CA Arrel — [Rol: Administrador del Servidor]
