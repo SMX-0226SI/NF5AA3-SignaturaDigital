@@ -60,10 +60,13 @@
 
 ## Fase 3: Instal·lació del Portal Web i IIS — [Rol: Administrador del Servidor]
 
+1. Aneu a `Add Roles and Features` i seleccioneu `Active Directory Certificate Services`.
+1. Seleccioneu l'opció **Certification Authority Web Enrollment**. Feu **Next**, veureu com també s'instal·len els components necessaris (IIS, etc.).
+1. En acabar, torneu a executar **Configure Active Directory Certificate Services** de nou i seleccionar **Certification Authority Web Enrollment** i clicar `Configure`.
 1. Obriu l'Administrador de l'IIS (Internet Information Services).
-2. Aneu a "Default Web Site", seleccioneu **Bindings** (Enllaços) i afegiu-ne un de nou del tipus https al port 443.
-3. Seleccioneu el certificat SSL que heu instal·lat a la Fase 2 ("Certificat Web Nexus").
-4. Des del navegador del propi servidor, comproveu que podeu accedir a: `https://localhost/certsrv`.
+1. Aneu a "Default Web Site", seleccioneu **Bindings** (Enllaços) i afegiu-ne un de nou del tipus https al port 443.
+1. Seleccioneu el certificat SSL que heu instal·lat a la Fase 2 ("Certificat Web Nexus").
+1. Des del navegador del propi servidor, comproveu que podeu accedir a: `https://localhost/certsrv`.
 
 ## Fase 4: Configuració de l'IIS i posada en marxa — [Rol: Administrador del Servidor]
 
