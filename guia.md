@@ -36,7 +36,7 @@
     [Version]
     Signature="$Windows NT$"
     [NewRequest]
-    Subject="CN=ca.nexus.test"
+    Subject="CN=SVR-CA"
     KeyLength=2048
     KeySpec=1
     KeyUsage=0x40
@@ -46,10 +46,10 @@
     FriendlyName="Certificat Web Nexus"
     [EnhancedKeyUsageExtension]
     OID=1.3.6.1.5.5.7.3.1
-    [Extensions]
+    [RequestAttributes]
     2.5.29.17="{text}"
     _continue="dns=ca.nexus.test&"
-    _continue="dns=SRV-CA-01"
+    _continue="dns=SRV-CA"
     ```
 
 3. Genereu la petició de certificat executant: `certreq -new C:\temp\servercert.inf C:\temp\servercert.req`
