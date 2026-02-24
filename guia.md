@@ -3,8 +3,8 @@
 ## Configuracions inicials
 
 1. Instal·lar Windows Server 2025 i Windows 11 a les VMs. Configurar adaptadors de xarxa en mode pont per accés directe.
-2. Inicialment, el servidor no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.
-3. Un cop ja ho tinguem tot instal·lat, el primer que farem serà configurar una IP estàtica al servidor i client amb el següent esquema:
+1. Inicialment, el servidor no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.
+1. Un cop ja ho tinguem tot instal·lat, el primer que farem serà configurar una IP estàtica al servidor i client amb el següent esquema:
 
     | Grup-classe | IP          | Mascara       | Gateway       | DNS     |
     |-------------|-------------|---------------|---------------|---------|
@@ -13,8 +13,8 @@
 
    > On y correspon al vostre número de llista (recordeu que un instal·la el Server i l'altre el Windows 11)
 
-5. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
-6. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.
+1. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
+1. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.
 
 ## Fase 1: Instal·lació de la CA Arrel — [Rol: Administrador del Servidor]
 
