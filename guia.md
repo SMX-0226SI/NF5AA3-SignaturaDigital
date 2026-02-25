@@ -86,6 +86,6 @@ L'usuari ha de rebre tant el certificat de la CA com el seu certificat personal.
 
 1. Creeu un document PDF qualsevol (una factura simulada de la vostra empresa cap al client) i obriu-lo amb Adobe Acrobat Reader.
 
-1. Dins l'apartat de "Totes les eines", accediu a "Usar un Certificat" i premeu "Signar".
+1. Dins l'apartat de `Totes les eines`, accediu a `Usar un Certificat` i premeu `Signar`.
 
 1. Dibuixeu l'àrea on s'aplicarà la signatura i trieu el vostre certificat recentment instal·lat a la finestra desplegable. * Deseu i bloquegeu el document (si així ho desitgeu). Finalment, obriu de nou el PDF per verificar que el panell de signatures valida l'autoria sense errors, confirmant que tot el procés criptogràfic funciona correctament.
