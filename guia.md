@@ -1,9 +1,9 @@
 # Guia de l'activitat
 
-## Configuracions inicials
+## Fase 1: Preparació de l'entorn de laboratori
 
-1. Instal·lar Windows Server 2025 i Windows 11 a les VMs. Configurar adaptadors de xarxa en mode pont per accés directe.
-1. Inicialment, el servidor no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.
+1. Instal·lar Ubuntu Server i Windows 11 a les VMs. Configurar adaptadors de xarxa en mode pont per accés directe.
+1. Inicialment, el client no se li assignarà cap IP, fins que prèviament pausem les actualitzacions.
 1. Un cop ja ho tinguem tot instal·lat, el primer que farem serà configurar una IP estàtica al servidor i client amb el següent esquema:
 
     | Grup-classe | IP          | Mascara       | Gateway       | DNS     |
@@ -13,78 +13,76 @@
 
    > On y correspon al vostre número de llista (recordeu que un instal·la el Server i l'altre el Windows 11)
 
-1. Canviar el nom del servidor a **SRV-CA-0X** on X és el número del vostre grup.
-1. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexus.test) a la seva IP corresponent.
+1. Canviar el nom del servidor a **ca.nexusX.test** on X és el número del vostre grup.
+1. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexusX.test) a la seva IP corresponent.
 
-## Fase 1: Instal·lació de la CA Arrel — [Rol: Administrador del Servidor]
+> **Important**: És molt aconsellable crear instantànies (snapshots) d'ambdues màquines abans d'iniciar la pràctica per permetre la reversió de l'estat dels sistemes un cop finalitzada l'activitat
 
-1. Obriu l'Administrador del Servidor (Server Manager) al servidor i afegiu el rol d'**Active Directory Certificate Services (AD CS)**.
-2. Durant la selecció de serveis de rol, marqueu només Certification Authority. Completa la instal·lació.
-3. Inicieu la configuració post-instal·lació (bandera de notificacions) i configureu la CA amb els següents paràmetres:
-4. Tipus d'instal·lació: **Standalone CA** (CA Independent).
-5. Tipus de CA: **Root CA** (CA Arrel).
-6. Clau privada: Creeu una nova clau privada amb una longitud de **4096 bits**.
-7. Nom de la CA: **NexusX-Root-CA** (on X és el número del vostre grup).
-8. Període de validesa:**5 anys**.
+## Fase 2: Creació de l'Entitat de Certificació (CA)
 
-## Fase 2: Generació d'un certificat SSL per al portal web — [Rol: Administrador del Servidor]
+1. Editar l'arxiu de configuració de OpenSSL (`/etc/ssl/openssl.cnf`) per configurar la CA. Afegir una secció específica per a la CA corporativa:
 
-1. Obriu el PowerShell com a administrador i creeu una carpeta temporal (ex. C:\temp).
-2. Creeu un fitxer anomenat servercert.inf utilitzant el Bloc de Notes amb la següent configuració (adapteu el nom del vostre servidor si és diferent a SRV-CA-01):
+    ``` text
+    [ca]
+    default_ca = CA_default
 
-    ```text
-    [Version]
-    Signature="$Windows NT$"
-    [NewRequest]
-    Subject="CN=SVR-CA"
-    KeyLength=2048
-    KeySpec=1
-    KeyUsage=0x40
-    MachineKeySet=TRUE
-    ProviderName="Microsoft RSA SChannel Cryptographic Provider"
-    RequestType=PKCS10
-    FriendlyName="Certificat Web Nexus"
-    [EnhancedKeyUsageExtension]
-    OID=1.3.6.1.5.5.7.3.1
-    [RequestAttributes]
-    2.5.29.17="{text}"
-    _continue="dns=ca.nexus.test&"
-    _continue="dns=SRV-CA"
+    [CA_default]
+    dir               = /etc/ssl/CA
+    certs             = $dir/certs
+    crl_dir           = $dir/crl
+    database          = $dir/index.txt
+
+    ...    
+
+1. Crear l'estructura de directoris per a la CA i inicialitzar els fitxers necessaris:
+
+    ``` bash
+    sudo mkdir -p /etc/ssl/CA/{certs,crl,newcerts,private}
+    sudo touch /etc/ssl/CA/index.txt
+    sudo echo 001 > /etc/ssl/CA/serial
     ```
 
-3. Genereu la petició de certificat executant: `certreq -new C:\temp\servercert.inf C:\temp\servercert.req`
-4. Envieu la petició a la CA: `certreq -submit -attrib "CertificateTemplate:WebServer" C:\temp\servercert.req C:\temp\servercert.cer`. Us demanarà seleccionar la vostra CA.
-5. Obriu la consola de l'Autoritat de Certificació, aneu a **Pending Requests** (Peticions pendents), feu clic dret sobre la vostra petició i seleccioneu **Issue** (Emetre).
-6. Recupereu el certificat (substituïu el '2' per l'ID correcte de la vostra petició): `certreq -retrieve 2 C:\temp\servercert_issued.cer`
-7. Instal·leu el certificat al servidor: `certreq -accept C:\temp\servercert_issued.cer`
+1. Ara, generarem la clau privada de la CA i el certificat d'autoritat:
 
-## Fase 3: Instal·lació del Portal Web i IIS — [Rol: Administrador del Servidor]
+    ``` bash
+    sudo openssl genpkey -algorithm RSA -out /etc/ssl/CA/private/ca.key.pem -aes256
+    sudo openssl req -x509 -new -nodes -key /etc/ssl/CA/private/ca.key.pem -sha256 -days 3650 -out /etc/ssl/CA/certs/ca.cert.pem
+    ```
 
-1. Aneu a `Add Roles and Features` i seleccioneu `Active Directory Certificate Services`.
-1. Seleccioneu l'opció **Certification Authority Web Enrollment**. Feu **Next**, veureu com també s'instal·len els components necessaris (IIS, etc.).
-1. En acabar, torneu a executar **Configure Active Directory Certificate Services** de nou i seleccionar **Certification Authority Web Enrollment** i clicar `Configure`.
-1. Obriu l'Administrador de l'IIS (Internet Information Services).
-1. Aneu a "Default Web Site", seleccioneu **Bindings** (Enllaços) i afegiu-ne un de nou del tipus https al port 443.
-1. Seleccioneu el certificat SSL que heu instal·lat a la Fase 2 ("Certificat Web Nexus").
-1. Des del navegador del propi servidor, comproveu que podeu accedir a: `https://localhost/certsrv`.
+    Per donar identitat a la CA, usarem com `Organization Name` el nom de la organització (ex: Nexus 1, Nexus 2, etc.) i com `Common Name` el nom del servidor (ex: ca.nexusX.test) on `X` és el número del vostre grup.
 
-## Fase 4: Configuració de l'IIS i posada en marxa — [Rol: Administrador del Servidor]
+## Fase 3: Generació de la clau i certificat d'usuari
 
-1. Obriu l'Administrador de l'IIS (Internet Information Services).
-1. Aneu a "Default Web Site", seleccioneu Bindings (Enllaços) i afegiu-ne un de nou del tipus https al port 443.
-1. Seleccioneu el certificat SSL que heu instal·lat a la Fase 2 ("Certificat Web Nexus").
-1. Des del navegador del propi servidor, comproveu que podeu accedir a: `https://ca.nexus.test/certsrv`.
+1. Simuleu l'emissió del certificat d'usuari directament des del servidor. Genereu una clau privada per a l'usuari (assigneu un PIN).
 
-## Fase 5: Sol·licitud des d'un client — [Rols Combinats]
+1. Signeu aquesta sol·licitud amb la clau privada de la vostra CA acabada de crear.
 
-1. **[Rol: Client Windows 11]** Aneu a la màquina virtual client (connectada a la mateixa xarxa que el servidor) i obriu el navegador web per accedir al portal: `https://ca.nexus.test/certsrv` (o la IP del servidor). Us mostrarà una alerta de seguretat.
-1. **[Rol: Client Windows 11]** Ometeu l'avís de moment, inicieu sessió i utilitzeu l'opció per descarregar el certificat de la CA.
-1. **[Rol: Client Windows 11]** Obriu la consola de gestió de certificats (certmgr.msc) i instal·leu el CA Arrel al magatzem de **"Entitats de certificació arrel de confiança"**. Reinicieu el navegador; ara la connexió a ca.nexus.test hauria de ser segura.
-1. **[Rol: Client Windows 11]** Des del portal web ja confiat, feu una petició d'un certificat d'usuari omplint les dades requerides. Aviseu al vostre company administrador que heu realitzat la petició.
-1. **[Rol: Administrador del Servidor]** Torneu al servidor Windows Server 2025, obriu la consola de la CA, busqueu la nova petició del vostre company a **"Pending Requests"** i emeteu-lo (Issue). Aviseu al client que ja el té disponible.
-1. **[Rol: Client Windows 11]** Aneu novament al portal web per consultar l'estat d'una sol·licitud pendent, i **descarregueu i instal·leu el vostre nou certificat d'usuari personal**.
+1. A continuació, exporteu i convertiu el certificat a format PKCS#12 (amb extensió .pfx), el format estàndard per a la instal·lació als equips clients.
 
-## Fase 6: Signatura digital d'un PDF — [Rol: Client Windows 11]
+1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant. Per facilitar la transferència, configureu els permisos adients al fitxer (per exemple, `chmod 777 CertUser.pfx`).
 
-1. Obriu un document PDF qualsevol amb un programari lector de PDFs (com Adobe Acrobat Reader). Utilitzeu l'opció "Certificats" per Signar digitalment el document utilitzant el certificat que acabeu d'obtenir.
-1. Deseu el document PDF signat, tanqueu el programa i torneu-lo a obrir. Comproveu que el programari valida la signatura de forma correcta ("Signatura és vàlida").
+## Fase 4: Distribució de Certificats (Servidor - Client)
+
+L'usuari ha de rebre tant el certificat de la CA com el seu certificat personal. Proposem dues alternatives per a l'empresa:
+
+- **Mètode 1 (Bàsic)**: Ús del protocol SCP. Instal·leu el servei SSH al servidor Ubuntu (apt install ssh). Al client Windows, obriu un intèrpret de comandes (PowerShell) i executeu les comandes scp amb la IP del servidor per descarregar cacert.pem i el certificat .pfx.
+
+- **Mètode 2 (Avançat - Portal d'empleat)**: Instal·leu un servidor web com Apache o Nginx a l'Ubuntu. Creeu una senzilla pàgina HTML corporativa "Portal de Certificats" amb enllaços de descàrrega cap als dos fitxers. L'usuari des del Windows només haurà d'entrar a la IP del servidor pel navegador web i fer clic per descarregar-los, una solució molt més propera al món real.
+
+## Fase 5: Instal·lació de Certificats al Client
+
+1. Obriu un terminal amb privilegis d'administrador al client Windows i instal·leu el programari de lectura PDF mitjançant el gestor de paquets Winget: `winget install Adobe.Acrobat.Reader.64-bit --accept-source-agreements --accept-package-agreements`.
+
+1. Executeu la consola d'administració de certificats amb la comanda certmgr.msc.
+
+1. A la branca d'Entitats de confiança arrel, importeu el certificat del servidor (cacert.pem) perquè el sistema operatiu reconegui la vostra pròpia CA com a segura.
+
+1. Seguidament, a la secció Personal, importeu el certificat d'usuari i introduïu la clau de protecció que vau establir al servidor durant l'exportació.
+
+## Fase 6: Signatura Digital d'un Document PDF
+
+1. Creeu un document PDF qualsevol (una factura simulada de la vostra empresa cap al client) i obriu-lo amb Adobe Acrobat Reader.
+
+1. Dins l'apartat de "Totes les eines", accediu a "Usar un Certificat" i premeu "Signar".
+
+1. Dibuixeu l'àrea on s'aplicarà la signatura i trieu el vostre certificat recentment instal·lat a la finestra desplegable. * Deseu i bloquegeu el document (si així ho desitgeu). Finalment, obriu de nou el PDF per verificar que el panell de signatures valida l'autoria sense errors, confirmant que tot el procés criptogràfic funciona correctament.
