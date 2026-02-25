@@ -59,13 +59,16 @@
 
 1. A continuació, exporteu i convertiu el certificat a format PKCS#12 (amb extensió .pfx), el format estàndard per a la instal·lació als equips clients.
 
-1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant. Per facilitar la transferència, configureu els permisos adients al fitxer (per exemple, `chmod 777 CertUser.pfx`).
+1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant. 
 
 ## Fase 4: Distribució de Certificats (Servidor - Client)
 
 L'usuari ha de rebre tant el certificat de la CA com el seu certificat personal. Proposem dues alternatives per a l'empresa:
 
-- **Mètode 1 (Bàsic)**: Ús del protocol SCP. Instal·leu el servei SSH al servidor Ubuntu (apt install ssh). Al client Windows, obriu un intèrpret de comandes (PowerShell) i executeu les comandes scp amb la IP del servidor per descarregar cacert.pem i el certificat .pfx.
+- **Mètode 1 (Bàsic)**: Ús del protocol SCP.
+
+  - Per facilitar la transferència, copieu tant el certificat arrel com el certificat d'usuari al directori accessible al client, i configureu els permisos adients als fitxers (per exemple, `chmod 777 CertUser.pfx`).
+  - Instal·leu el servei SSH al servidor Ubuntu (apt install ssh). Al client Windows, obriu un intèrpret de comandes (PowerShell) i executeu les comandes scp amb la IP del servidor per descarregar `cacert.pem` i el certificat `.pfx`.
 
 - **Mètode 2 (Avançat - Portal d'empleat)**: Instal·leu un servidor web com Apache o Nginx a l'Ubuntu. Creeu una senzilla pàgina HTML corporativa "Portal de Certificats" amb enllaços de descàrrega cap als dos fitxers. L'usuari des del Windows només haurà d'entrar a la IP del servidor pel navegador web i fer clic per descarregar-los, una solució molt més propera al món real.
 
