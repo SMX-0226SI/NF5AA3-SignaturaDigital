@@ -6,17 +6,18 @@ En aquesta activitat, es desenvoluparà una infraestructura de clau pública (PK
 
 ## 🎯Objectius clau
 
-- Instal·lar CA a Windows Server 2025.
-- Habilitar inscripció web (IIS).
+- Instal·lar CA a Ubuntu Server.
 - Generar certificats d'usuari.
 - Signar i verificar un PDF.
 
 ## 📋Requisits
 
-- VM Windows Server 2025 (adaptador pont).
+- VM Ubuntu Server (adaptador pont).
 - VM Client Windows 10/11 (adaptador pont).
 - Adobe Acrobat Reader instal·lat al client.
 - Treball en Parelles (Admin/Client).
+
+> Alternativament, podeu usar els equips amb dues interfaces de xarxa, una en NAT per accedir a Internet i una en pont per comunicació entre equips (per no dependre del router virtual), però no és obligatori.
 
 ## 💻Què cal lliurar
 
