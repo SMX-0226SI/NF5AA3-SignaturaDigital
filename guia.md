@@ -59,7 +59,7 @@
 
 1. A continuació, exporteu i convertiu el certificat a format PKCS#12 (amb extensió .pfx), el format estàndard per a la instal·lació als equips clients.
 
-1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant. 
+1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant.
 
 ## Fase 4: Distribució de Certificats (Servidor - Client)
 
