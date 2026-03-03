@@ -22,7 +22,7 @@
 
 1. Editar l'arxiu de configuració de OpenSSL (`/etc/ssl/openssl.cnf`) per configurar la CA. Afegir una secció específica per a la CA corporativa:
 
-    ``` text
+    ``` plaintext
     [ca]
     default_ca = CA_default
 
