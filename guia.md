@@ -32,7 +32,7 @@
     crl_dir           = $dir/crl
     database          = $dir/index.txt
 
-    ...    
+    ```
 
 1. Crear l'estructura de directoris per a la CA i inicialitzar els fitxers necessaris:
 
