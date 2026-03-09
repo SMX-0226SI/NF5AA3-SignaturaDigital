@@ -45,8 +45,7 @@
 1. Ara, generarem la clau privada de la CA i el certificat d'autoritat:
 
     ``` bash
-    sudo openssl genpkey -algorithm RSA -out /etc/ssl/CA/private/ca.key.pem -aes256
-    sudo openssl req -x509 -new -nodes -key /etc/ssl/CA/private/ca.key.pem -sha256 -days 3650 -out /etc/ssl/CA/certs/ca.cert.pem
+    sudo openssl req -new -x509 -keyout demoCA/private/cakey.pem -out demoCA/cacert.pem
     ```
 
     Per donar identitat a la CA, usarem com `Organization Name` el nom de la organització (ex: Nexus 1, Nexus 2, etc.) i com `Common Name` el nom del servidor (ex: ca.nexusX.test) on `X` és el número del vostre grup.
