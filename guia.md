@@ -52,11 +52,23 @@
 
 ## Fase 3: Generació de la clau i certificat d'usuari
 
-1. Simuleu l'emissió del certificat d'usuari directament des del servidor. Genereu una clau privada per a l'usuari (assigneu un PIN).
+1. Simuleu l'emissió del certificat d'usuari directament des del servidor. Genereu una clau privada per a l'usuari (podeu assignar un PIN que es requereixi cada cop que s'utilitzi, trieu per exemple *123456*).
+
+    ``` bash
+    openssl req -new -keyout userkey.pem -out userreq.csr
+    ```
 
 1. Signeu aquesta sol·licitud amb la clau privada de la vostra CA acabada de crear.
 
+    ``` bash
+    openssl ca -in userreq.csr -out usercert.pem
+    ```
+
 1. A continuació, exporteu i convertiu el certificat a format PKCS#12 (amb extensió .pfx), el format estàndard per a la instal·lació als equips clients.
+
+    ``` bash
+    openssl pkcs12 -export -out CertUser.pfx -inkey userkey.pem -in usercert.pem
+    ```
 
 1. Assigneu una contrasenya d'exportació, ja que serà necessària perquè l'usuari la introdueixi al seu equip més endavant.
 
