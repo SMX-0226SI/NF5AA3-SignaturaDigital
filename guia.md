@@ -40,13 +40,15 @@
     ``` bash
     sudo mkdir -p /etc/ssl/CA/{certs,crl,newcerts,private}
     sudo touch /etc/ssl/CA/index.txt
-    sudo echo 001 > /etc/ssl/CA/serial
+    sudo echo "C001" > /etc/ssl/CA/serial
     ```
+
+    > El serial en algunes versions d'OpenSSL dona error si comença per 0 [enllaç a issue](https://github.com/Icinga/icinga2/issues/5511). Per evitar en qualsevol cas l'error, el podem fer començar per una lletra com `C`.
 
 1. Ara, generarem la clau privada de la CA i el certificat d'autoritat:
 
     ``` bash
-    sudo openssl req -new -x509 -keyout demoCA/private/cakey.pem -out demoCA/cacert.pem
+    sudo openssl req -new -x509 -keyout /etc/ssl/CA/private/cakey.pem -out /etc/ssl/CA/cacert.pem
     ```
 
     Per donar identitat a la CA, usarem com `Organization Name` el nom de la organització (ex: Nexus 1, Nexus 2, etc.) i com `Common Name` el nom del servidor (ex: ca.nexusX.test) on `X` és el número del vostre grup.
