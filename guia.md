@@ -11,7 +11,7 @@
     | B           | 192.168.4.y | 255.255.255.0 |               |         |
 
    > On y correspon al vostre número de llista (recordeu que un instal·la el Server i l'altre el Windows 11).
-   > 
+   >
    > **No posem ni gateway ni DNS perquè per sortir a Interet es fa servir l'adaptador en NAT.**
 
 1. Canviar el nom del servidor a **ca.nexusX.test** on X és el número del vostre grup.
