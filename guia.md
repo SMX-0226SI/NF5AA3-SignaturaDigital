@@ -3,7 +3,8 @@
 ## Fase 1: Preparació de l'entorn de laboratori
 
 1. Instal·lar Ubuntu Server i Windows 11 a les VMs. Configurar dues interícies de xarxa, una en NAT (dhcp) per tenir accés a Internet i una segona perquè es puguin veure les dues màquines.
-1. La configuració de l'adaptador pont, ha de ser una IP estàtica al servidor i client amb el següent esquema:
+
+2. La configuració de l'adaptador pont, ha de ser una IP estàtica al servidor i client amb el següent esquema:
 
     | Grup-classe | IP          | Mascara       | Gateway       | DNS     |
     |-------------|-------------|---------------|---------------|---------|
@@ -12,10 +13,11 @@
 
    > On y correspon al vostre número de llista (recordeu que un instal·la el Server i l'altre el Windows 11).
    >
-   > **No posem ni gateway ni DNS perquè per sortir a Interet es fa servir l'adaptador en NAT.**
+   > **No posem ni gateway ni DNS perquè per sortir a Internet es fa servir l'adaptador en NAT.**
 
-1. Canviar el nom del servidor a **ca.nexusX.test** on X és el número del vostre grup.
-1. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexusX.test) a la seva IP corresponent.
+3. Canviar el nom del servidor a **ca.nexusX.test** on X és el número del vostre grup.
+
+4. Configurar en el client l'arxiu de hosts per resoldre el nom del servei web (ca.nexusX.test) a la seva IP corresponent.
 
 > **Important**: És molt aconsellable crear instantànies (snapshots) d'ambdues màquines abans d'iniciar la pràctica per permetre la reversió de l'estat dels sistemes un cop finalitzada l'activitat
 
