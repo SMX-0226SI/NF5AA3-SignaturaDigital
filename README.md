@@ -59,7 +59,9 @@ Els usuaris necessiten un certificat digital per poder la seva assegurar la seva
 
 Un certificat que ha de ser generat per una autoritat de certificació (CA) que garanteixi la identitat del titular del certificat, tal com s'ha explicat a la teoria, aquestes autoritats poden ser organismes públics o organitzacions privades com Comodo o Symantec. Encara que qualsevol organització pot crear la seva pròpia CA, en aquest cas, es crearà una CA corporativa per a l'empresa fictícia `Nexus`.
 
-Descripció completa de l'activitat a la [guia de l'activitat](guia.md).
+Una CA corporativa partirà d'un certificat signat per una entitat certificadora reconeguda, però en el cas de l'activitat, la CA corporativa serà autogestionada i per tant, es partirà d'un certificat arrel creat per l'empresa fictícia.
+
+Descripció completa de l'activitat està disponible a la [guia de l'activitat](guia.md).
 
 ### Documentació i informe final
 
