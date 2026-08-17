@@ -1,32 +1,83 @@
-# 🛡️Activitat: Implementació d'una PKI Corporativa i Signatura Digital
+# NF5AA3. Infraestructura de clau pública (PKI) i signatura digital
 
-## Introducció
+## Presentació de l'activitat
 
 En aquesta activitat, es desenvoluparà una infraestructura de clau pública (PKI) corporativa i es realitzarà la signatura digital d'un document. La PKI és un conjunt de rols, polítiques, hardware, software i procediments necessaris per crear, gestionar, distribuir, utilitzar, emmagatzemar i revocar certificats digitals i gestionar la criptografia de clau pública.
 
-## 🎯Objectius clau
+### Durada de l'activitat
+
+Durada aproximada: 4 hores.
+
+### Objectius de l'activitat
 
 - Instal·lar CA a Ubuntu Server.
 - Generar certificats d'usuari.
 - Signar i verificar un PDF.
 
-## 📋Requisits
+### Competències treballades
 
-- VM Ubuntu Server (adaptador pont).
-- VM Client Windows 10/11 (adaptador pont).
+p) Aplicar els protocols i normes de seguretat, qualitat i respecte al medi ambient en les intervencions realitzades.
+
+### Resultats d'aprenentatge i criteris d'avaluació
+
+RA4. Assegura la privadesa de la informació transmesa en xarxes informàtiques descrivint vulnerabilitats i instal·lant programari específic.
+
+4.6 Descriu sistemes d'identificació com la signatura electrònica, certificat digital, entre altres.
+4.7 Utilitza sistemes d'identificació com la signatura electrònica, certificat digital, entre altres.
+
+### Continguts
+
+4.5 Sistemes d'identificació: signatura electrònica, certificats digitals i altres.
+
+### Capacitats clau
+
+|             |                         |                    |
+|------       |---------                |----------          |
+|Autonomia    |Organització del treball |Treball en equip    |
+|~~Innovació~~|Resolució de problemes   |Responsabilitat     |
+|             |Relació interpersonal    |                    |
+
+## Enunciat de l'activitat
+
+### Entorn de treball
+
+- És una activitat en parelles.
+- VM Servidor Ubuntu Server (adaptador1: NAT/adaptador 2: pont).
+- VM Client Windows 10/11 (adaptador1: NAT/adaptador 2: pont).
 - Adobe Acrobat Reader instal·lat al client.
-- Treball en Parelles (Admin/Client).
 
-> Alternativament, podeu usar els equips amb dues interfaces de xarxa, una en NAT per accedir a Internet i una en pont per comunicació entre equips (per no dependre del router virtual), però no és obligatori.
+Configuració adreces:
 
-## 💻Què cal lliurar
+- Adaptador NAT: DHCP (per accés a Internet).
+- Adaptador pont: IP estàtica 192.168.2.x (2n A) i 192.168.4.x (2n B) segons el vostre número de llista.
 
-- Cal elaborar una guia tècnica en format `Markdown` que detalli els passos seguits per a la implementació de la PKI i la signatura digital. Aquesta guia ha de ser clara i ben estructurada. Ha d'incloure les captures significatives i les explicacions i indicacions necessàries per a cada pas realitzat. La guia ha de ser suficientment detallada perquè un altre usuari pugui replicar els passos seguint les instruccions proporcionades. Especialment, pareu atenció a documentar el final de cada fase: certificat creat, instal·lació certificat arrel, PDF signat, etc.
-- El document PDF de prova (factura/contracte) signat digitalment i emès pel client
-- El certificat de l'entitat arrel.
+> **Nota**: és una activitat pensada per fer en parelles, si algun alumne la fa sol, podeu simplement podeu canviar la interfície de pont a només-amfitrió (host-only) amb assingnació DHCP.
 
-Al ser un treball en equip, la guia ha de ser la mateixa pel dos membres, però cada membre ha de realitzar la part corresponent a la seva màxima responsabilitat (Administrador del Servidor o Client).
+### Instruccions de l'activitat
 
----
+Els usuaris necessiten un certificat digital per poder la seva assegurar la seva identitat a la xarxa, sigui per accedir de forma segura a un servei web, per signar un document PDF o per xifrar correus electrònics.
+
+Un certificat que ha de ser generat per una autoritat de certificació (CA) que garanteixi la identitat del titular del certificat, tal com s'ha explicat a la teoria, aquestes autoritats poden ser organismes públics o organitzacions privades com Comodo o Symantec. Encara que qualsevol organització pot crear la seva pròpia CA, en aquest cas, es crearà una CA corporativa per a l'empresa fictícia `Nexus`.
 
 Descripció completa de l'activitat a la [guia de l'activitat](guia.md).
+
+### Documentació i informe final
+
+Redactar una guia tècnica en format `Markdown` que detalli els passos seguits per a la implementació de la PKI i la signatura digital. Aquesta guia ha de ser clara i ben estructurada, pensada per guiar de forma efectiva altres tècnics per desplegar la solució. Ha d'incloure les captures significatives i les explicacions i indicacions necessàries per a cada pas realitzat. Especialment, pareu atenció a documentar el final de cada fase: certificat creat, instal·lació certificat arrel, PDF signat, etc.
+
+A més de la guia, caldrà incorporar els següents documents al repositori:
+
+- El document PDF de prova (factura/contracte) signat digitalment pel client
+- El certificat de l'entitat arrel.
+
+Al ser un treball en equip, tots dos membres de l'equip lliuren la guia de forma conjunta. És molt important no limitar-se a dividir-se les tasques, cal que tots dos membres de l'equip coneguin i entenguin tot el procés, ja que caldrà fer una petita defensa oral del treball realitzat davant del professorat.
+
+### Enllaços d'interès
+
+- [JuncoTIC - PKI: ¿Qué es la infraestructura de clave pública?](https://juncotic.com/pki-que-es-la-infraestructura-de-clave-publica/)
+
+- [MangoHost - How to Set Up and Configure a Certificate Authority (CA) on Ubuntu 24](https://mangohost.net/blog/how-to-set-up-and-configure-a-certificate-authority-ca-on-ubuntu-24/)
+
+- [JuncoTIC - OpenSSL y certificados digitales – Práctica](https://juncotic.com/openssl-y-certificados-digitales-practica/)
+
+- [FNTM - Firmar un documento PDF con Adobe Acrobat Reader (PDF)](https://www.sede.fnmt.gob.es/documents/10445900/10528353/Firmar_documento_PDF_Adobe_Acrobat_Reader_DC.pdf)
